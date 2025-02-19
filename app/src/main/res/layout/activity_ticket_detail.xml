@@ -392,15 +392,18 @@
                         app:layout_constraintEnd_toEndOf="@+id/img_barcode"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <Button
+                    android:id="@+id/download_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Download Ticket"
+                    android:background="@drawable/border_radious"
+                    android:layout_gravity="center"/>
+
             </LinearLayout>
 
-            <Button
-                android:id="@+id/download_btn"
-                android:layout_width="370dp"
-                android:layout_height="wrap_content"
-                android:text="Download Ticket"
-                android:background="@drawable/border_radious"
-                android:layout_gravity="center"/>
+
 
         </LinearLayout>
 
