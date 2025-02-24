@@ -3,22 +3,34 @@ package com.example.nextvanproto
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.WindowInsetsAnimation
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 import java.util.Calendar
 
 class HomeScreen : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+
+    private lateinit var svFrom: SearchView
+    private lateinit var svTo: SearchView
+    private lateinit var rvSearchResults: RecyclerView
+    private lateinit var adapter: LocationAdapter
+    private val locationList = mutableListOf<Location>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +51,53 @@ class HomeScreen : AppCompatActivity() {
         // Display the user name
         val tvUsername = findViewById<TextView>(R.id.tvUsername)
         tvUsername.text = userName
+
+        svFrom = findViewById(R.id.svFrom)
+        svTo = findViewById(R.id.svTo)
+        rvSearchResults = findViewById(R.id.rvSearchResults) // Add this RecyclerView in XML
+
+        adapter = LocationAdapter(locationList) { selectedCity ->
+            if (svFrom.hasFocus()) {
+                svFrom.setQuery(selectedCity, false)
+            } else if (svTo.hasFocus()) {
+                svTo.setQuery(selectedCity, false)
+            }
+            rvSearchResults.visibility = View.GONE
+        }
+
+
+        rvSearchResults.layoutManager = LinearLayoutManager(this)
+        rvSearchResults.adapter = adapter
+
+        fetchLocations()
+
+        // Attach search listeners
+        svFrom.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filteredList = locationList.filter { it.name.contains(newText ?: "", ignoreCase = true) }
+                adapter.updateList(filteredList)
+                rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
+                return true
+            }
+        })
+
+
+        svTo.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filteredList = locationList.filter { it.name.contains(newText ?: "", ignoreCase = true) }
+                adapter.updateList(filteredList)
+                rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
+                return true
+            }
+        })
 
 
 
@@ -107,6 +166,33 @@ class HomeScreen : AppCompatActivity() {
     }
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
+    }
+
+    private fun fetchLocations() {
+        val apiService = RetrofitClient.instance
+        apiService.getLocations().enqueue(object : Callback<List<Location>> {
+            override fun onResponse(call: Call<List<Location>>, response: Response<List<Location>>) {
+                if (response.isSuccessful && response.body() != null) {
+                    locationList.clear()
+                    locationList.addAll(response.body()!!)
+                    runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
+                } else {
+                    Toast.makeText(this@HomeScreen, "No data found", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Location>>, t: Throwable) {
+                Toast.makeText(this@HomeScreen, "Error fetching locations: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun filterLocations(query: String?) {
+        val filteredList = locationList.filter { it.name.contains(query ?: "", ignoreCase = true) }
+        adapter.updateList(filteredList)
     }
 
 

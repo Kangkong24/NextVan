@@ -1,6 +1,6 @@
 package com.example.nextvanproto
 
-import android.content.Context.MODE_PRIVATE
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -104,9 +104,10 @@ class SignupScreen : AppCompatActivity() {
                                 }
 
                                 // Navigate to the home screen
-                                val intent = Intent(this@SignupScreen, HomeScreen::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                val intent = Intent(this@SignupScreen, LoginScreen::class.java)
                                 startActivity(intent)
+                                finish() // This ensures SignupScreen is removed from the stack
+
                             } else {
                                 Toast.makeText(this@SignupScreen, signupResponse.message ?: "Signup failed", Toast.LENGTH_SHORT).show()
                             }

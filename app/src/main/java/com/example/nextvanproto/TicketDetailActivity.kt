@@ -15,10 +15,8 @@ class TicketDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_ticket_detail)
 
 
-        // Retrieve user name from SharedPreferences
         val sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val userName = sharedPreferences.getString("userName", "User")
-        // Display the user name
         val tvUsername = findViewById<TextView>(R.id.user_name)
         tvUsername.text = userName
 

@@ -143,6 +143,14 @@
                     android:searchHintIcon="@drawable/to_van"
                     app:layout_constraintTop_toBottomOf="@+id/tvTo" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSearchResults"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@+id/svTo" />
+
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/passengers_row"
                     android:layout_width="match_parent"
