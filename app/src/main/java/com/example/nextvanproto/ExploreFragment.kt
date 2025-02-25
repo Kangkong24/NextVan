@@ -41,7 +41,7 @@ class ExploreFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
 
         val apiService = RetrofitClient.instance
-        apiService.getRoutes().enqueue(object : Callback<List<Route>> {
+        apiService.getExploreRoutes().enqueue(object : Callback<List<Route>> {
             override fun onResponse(call: Call<List<Route>>, response: Response<List<Route>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {

@@ -41,9 +41,12 @@ class SearchResultActivity : AppCompatActivity() {
     private fun fetchRoutes() {
         progressBar.visibility = View.VISIBLE
 
+        val fromLocation = intent.getStringExtra("from_location") ?: return
+        val toLocation = intent.getStringExtra("to_location") ?: return
+
         val apiService = RetrofitClient.instance
 
-        apiService.getRoutes().enqueue(object : Callback<List<Route>> {
+        apiService.getRoutes(fromLocation, toLocation).enqueue(object : Callback<List<Route>> {
             override fun onResponse(call: Call<List<Route>>, response: Response<List<Route>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {

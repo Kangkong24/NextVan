@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.WindowInsetsAnimation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SearchView
@@ -19,30 +18,57 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 import java.util.Calendar
 
 class HomeScreen : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
-
+    private lateinit var tvAdultMinus: TextView
+    private lateinit var tvAdultPlus: TextView
+    private lateinit var tvAdultCount: TextView
+    private lateinit var tvChildMinus: TextView
+    private lateinit var tvChildPlus: TextView
+    private lateinit var tvChildCount: TextView
     private lateinit var svFrom: SearchView
     private lateinit var svTo: SearchView
     private lateinit var rvSearchResults: RecyclerView
     private lateinit var adapter: LocationAdapter
     private val locationList = mutableListOf<Location>()
 
+    companion object {
+        var adultCount = 0
+        var childCount = 0
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home_screen)
 
+        tvAdultMinus = findViewById(R.id.tvAdultMinus)
+        tvAdultPlus = findViewById(R.id.tvAdultPlus)
+        tvAdultCount = findViewById(R.id.tvAdultCount)
+        tvChildMinus = findViewById(R.id.tvMinusChild)
+        tvChildPlus = findViewById(R.id.tvPlusChild)
+        tvChildCount = findViewById(R.id.tvChildCount)
 
+        // Load session values
+        updateUI()
+
+        tvAdultMinus.setOnClickListener { updateCount(isAdult = true, isIncrement = false) }
+        tvAdultPlus.setOnClickListener { updateCount(isAdult = true, isIncrement = true) }
+        tvChildMinus.setOnClickListener { updateCount(isAdult = false, isIncrement = false) }
+        tvChildPlus.setOnClickListener { updateCount(isAdult = false, isIncrement = true) }
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
         val etReturnDate = findViewById<EditText>(R.id.etReturnDate)
         val etDepartDate = findViewById<EditText>(R.id.etDepartDate)
+        // Load previous session values
+        etDepartDate.setText(SessionManager.departDate ?: "")
+        etReturnDate.setText(SessionManager.returnDate ?: "")
+
         val btnSearch = findViewById<Button>(R.id.btnSearch)
 
         // Retrieve user name from SharedPreferences
@@ -54,7 +80,7 @@ class HomeScreen : AppCompatActivity() {
 
         svFrom = findViewById(R.id.svFrom)
         svTo = findViewById(R.id.svTo)
-        rvSearchResults = findViewById(R.id.rvSearchResults) // Add this RecyclerView in XML
+        rvSearchResults = findViewById(R.id.rvSearchResults)
 
         adapter = LocationAdapter(locationList) { selectedCity ->
             if (svFrom.hasFocus()) {
@@ -71,14 +97,14 @@ class HomeScreen : AppCompatActivity() {
 
         fetchLocations()
 
-        // Attach search listeners
+
         svFrom.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val filteredList = locationList.filter { it.name.contains(newText ?: "", ignoreCase = true) }
+                val filteredList = locationList.filter { it.name.contains(newText ?: " ", ignoreCase = true) }
                 adapter.updateList(filteredList)
                 rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
                 return true
@@ -92,7 +118,7 @@ class HomeScreen : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val filteredList = locationList.filter { it.name.contains(newText ?: "", ignoreCase = true) }
+                val filteredList = locationList.filter { it.name.contains(newText ?: " ", ignoreCase = true) }
                 adapter.updateList(filteredList)
                 rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
                 return true
@@ -102,9 +128,49 @@ class HomeScreen : AppCompatActivity() {
 
 
         btnSearch.setOnClickListener {
-            val intent = Intent(this, SearchResultActivity::class.java)
+            val fromLocation = svFrom.query.toString().trim()
+            val toLocation = svTo.query.toString().trim()
+            val departDate = SessionManager.departDate
+            val returnDate = SessionManager.returnDate
+            val totalPassengers = (adultCount ?: 0) + (childCount ?: 0)
+
+            // Validate locations
+            if (fromLocation.isEmpty() || toLocation.isEmpty()) {
+                Toast.makeText(this, "Please select both locations", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validate departure date
+            if (departDate.isNullOrEmpty()) {
+                Toast.makeText(this, "Please select a departure date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validate return date
+            if (returnDate.isNullOrEmpty()) {
+                Toast.makeText(this, "Please select a return date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validate passenger count
+            if (totalPassengers == 0) {
+                Toast.makeText(this, "Please select at least one passenger", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // All validations passed, proceed to next activity
+            val intent = Intent(this, SearchResultActivity::class.java).apply {
+                putExtra("from_location", fromLocation)
+                putExtra("to_location", toLocation)
+                putExtra("depart_date", departDate)
+                putExtra("return_date", returnDate)
+                putExtra("adult_count", adultCount)
+                putExtra("child_count", childCount)
+            }
             startActivity(intent)
         }
+
+
 
         etReturnDate.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -115,6 +181,9 @@ class HomeScreen : AppCompatActivity() {
             val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
                 val formattedDate = String.format("%02d-%02d-%d", selectedDay, selectedMonth + 1, selectedYear)
                 etReturnDate.setText(formattedDate)
+
+                // Saved selected date in SessionManager
+                SessionManager.returnDate = formattedDate
             }, year, month, day)
 
             datePickerDialog.show()
@@ -129,10 +198,14 @@ class HomeScreen : AppCompatActivity() {
             val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
                 val formattedDate = String.format("%02d-%02d-%d", selectedDay, selectedMonth + 1, selectedYear)
                 etDepartDate.setText(formattedDate)
+
+                // Save in SessionManager for the session
+                SessionManager.departDate = formattedDate
             }, year, month, day)
 
             datePickerDialog.show()
         }
+
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId){
@@ -195,6 +268,19 @@ class HomeScreen : AppCompatActivity() {
         adapter.updateList(filteredList)
     }
 
+    private fun updateCount(isAdult: Boolean, isIncrement: Boolean) {
+        if (isAdult) {
+            if (isIncrement) adultCount++ else if (adultCount > 0) adultCount--
+        } else {
+            if (isIncrement) childCount++ else if (childCount > 0) childCount--
+        }
+        updateUI()
+    }
+
+    private fun updateUI() {
+        tvAdultCount.text = "$adultCount Adult"
+        tvChildCount.text = "$childCount Child"
+    }
 
 }
 
