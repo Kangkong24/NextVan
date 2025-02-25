@@ -65,11 +65,13 @@
                     app:srcCompat="@drawable/van" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/seatRecyclerview"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="132dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imgVan"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/imgVan"

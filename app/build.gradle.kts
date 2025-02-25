@@ -7,6 +7,10 @@ android {
     namespace = "com.example.nextvanproto"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.nextvanproto"
         minSdk = 24
@@ -16,6 +20,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
