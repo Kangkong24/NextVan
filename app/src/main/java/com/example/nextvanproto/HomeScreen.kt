@@ -263,11 +263,6 @@ class HomeScreen : AppCompatActivity() {
     }
 
 
-    private fun filterLocations(query: String?) {
-        val filteredList = locationList.filter { it.name.contains(query ?: "", ignoreCase = true) }
-        adapter.updateList(filteredList)
-    }
-
     private fun updateCount(isAdult: Boolean, isIncrement: Boolean) {
         if (isAdult) {
             if (isIncrement) adultCount++ else if (adultCount > 0) adultCount--

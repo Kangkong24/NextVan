@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.nextvanproto.HomeScreen.Companion.adultCount
+import com.example.nextvanproto.HomeScreen.Companion.childCount
+import com.example.nextvanproto.SessionManager.departDate
+import com.example.nextvanproto.SessionManager.returnDate
 import com.example.nextvanproto.databinding.ActivitySeatListBinding
 
 class SeatListActivity : AppCompatActivity() {
@@ -39,6 +43,17 @@ class SeatListActivity : AppCompatActivity() {
             val intent = Intent(this, TicketDetailActivity::class.java)
             intent.putExtra("selectedSeats", binding.tvSelectedSeat.text.toString())
             intent.putExtra("totalPrice", totalPrice)  // Pass calculated total price
+            intent.putExtra("totalPrice", totalPrice)
+            intent.putExtra("company_name", companyName)
+            intent.putExtra("company_logo", companyLogo)
+            intent.putExtra("from_location", fromLocation)
+            intent.putExtra("to_location", toLocation)
+            intent.putExtra("date", date)
+            intent.putExtra("arrive_time", arriveTime)
+            intent.putExtra("depart_date", departDate)
+            intent.putExtra("return_date", returnDate)
+            intent.putExtra("adult_count", adultCount)
+            intent.putExtra("child_count", childCount)
             startActivity(intent)
         }
     }
