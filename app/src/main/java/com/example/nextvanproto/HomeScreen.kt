@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,7 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var rvSearchResults: RecyclerView
     private lateinit var adapter: LocationAdapter
     private val locationList = mutableListOf<Location>()
+    private var focusedSearchView: SearchView? = null // Track focused SearchView
 
     companion object {
         var adultCount = 0
@@ -82,12 +84,8 @@ class HomeScreen : AppCompatActivity() {
         svTo = findViewById(R.id.svTo)
         rvSearchResults = findViewById(R.id.rvSearchResults)
 
-        adapter = LocationAdapter(locationList) { selectedCity ->
-            if (svFrom.hasFocus()) {
-                svFrom.setQuery(selectedCity, false)
-            } else if (svTo.hasFocus()) {
-                svTo.setQuery(selectedCity, false)
-            }
+        adapter = LocationAdapter(emptyList()) { selectedCity ->
+            focusedSearchView?.setQuery(selectedCity, false)
             rvSearchResults.visibility = View.GONE
         }
 
@@ -97,34 +95,9 @@ class HomeScreen : AppCompatActivity() {
 
         fetchLocations()
 
-
-        svFrom.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                val filteredList = locationList.filter { it.name.contains(newText ?: " ", ignoreCase = true) }
-                adapter.updateList(filteredList)
-                rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
-                return true
-            }
-        })
-
-
-        svTo.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                val filteredList = locationList.filter { it.name.contains(newText ?: " ", ignoreCase = true) }
-                adapter.updateList(filteredList)
-                rvSearchResults.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
-                return true
-            }
-        })
-
+        // Attach listeners to both SearchViews
+        setupSearchView(svFrom)
+        setupSearchView(svTo)
 
 
         btnSearch.setOnClickListener {
@@ -241,6 +214,39 @@ class HomeScreen : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
     }
 
+    private fun setupSearchView(searchView: SearchView) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                rvSearchResults.visibility = View.GONE
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                focusedSearchView = searchView
+                val query = newText?.trim() ?: ""
+                val filteredList = locationList.filter {
+                    it.name.contains(query, ignoreCase = true)
+                }
+                adapter.updateList(filteredList)
+
+                // Show RecyclerView only when there are results
+                rvSearchResults.visibility = if (query.isNotEmpty() && filteredList.isNotEmpty()) View.VISIBLE else View.GONE
+                return true
+            }
+        })
+
+        // Set focus listener
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                focusedSearchView = searchView
+                val params = rvSearchResults.layoutParams as ConstraintLayout.LayoutParams
+                params.topToBottom = searchView.id
+                rvSearchResults.layoutParams = params
+                rvSearchResults.requestLayout()
+            }
+        }
+    }
+
     private fun fetchLocations() {
         val apiService = RetrofitClient.instance
         apiService.getLocations().enqueue(object : Callback<List<Location>> {
@@ -248,11 +254,7 @@ class HomeScreen : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     locationList.clear()
                     locationList.addAll(response.body()!!)
-                    runOnUiThread {
-                        adapter.notifyDataSetChanged()
-                    }
-                } else {
-                    Toast.makeText(this@HomeScreen, "No data found", Toast.LENGTH_SHORT).show()
+                    adapter.updateList(locationList)
                 }
             }
 

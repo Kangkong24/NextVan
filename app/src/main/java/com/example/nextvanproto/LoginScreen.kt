@@ -53,12 +53,12 @@ class LoginScreen : AppCompatActivity() {
             finish()
         }
 
-        tvForgotPassword.setOnClickListener {
-            // Implement forgot password logic
-            startActivity(Intent(this, TicketDetailActivity::class.java))
+       /* tvForgotPassword.setOnClickListener {
+            // Still need to implement forgot password logic
+            startActivity(Intent(this, HomeScreen::class.java))
             finish()
             Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 
     private fun validateInputs(): Boolean {

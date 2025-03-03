@@ -145,7 +145,7 @@
         android:id="@+id/tv_already"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:text="Already have an account?"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

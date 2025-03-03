@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ class SignupScreen : AppCompatActivity() {
     private lateinit var etPassword: EditText
     private lateinit var etCPassword: EditText
     private lateinit var btnCreate: Button
+    private lateinit var tvAlready: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,7 @@ class SignupScreen : AppCompatActivity() {
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         etCPassword = findViewById(R.id.etCPassword)
+        tvAlready = findViewById(R.id.tv_already)
         btnCreate = findViewById(R.id.btnCreate)
     }
 
@@ -46,6 +49,11 @@ class SignupScreen : AppCompatActivity() {
             if (validateInputs()) {
                 signupUser()
             }
+        }
+
+        tvAlready.setOnClickListener {
+            startActivity(Intent(this, LoginScreen::class.java))
+            finish()
         }
     }
 

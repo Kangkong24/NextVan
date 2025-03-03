@@ -61,7 +61,7 @@ class SeatListActivity : AppCompatActivity() {
     private fun initSeatList() {
         val reservedSeatsList = reservedSeats.split(",") // Convert to list
 
-        for (i in 0 until 18) {
+        for (i in 0 until 17) {
             val seatName = "No. ${i + 1}"
             val seatStatus = if (reservedSeatsList.contains(seatName)) {
                 Seat.SeatStatus.UNAVAILABLE
@@ -81,7 +81,15 @@ class SeatListActivity : AppCompatActivity() {
         })
 
         binding.seatRecyclerview.apply {
-            layoutManager = GridLayoutManager(this@SeatListActivity, 3)
+            val gridLayoutManager = GridLayoutManager(this@SeatListActivity, 6) // 6 spans total
+            layoutManager = gridLayoutManager
+
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (position < 2) 3 else 2
+                }
+            }
+
             adapter = seatAdapter
         }
     }
