@@ -3,15 +3,21 @@ package com.example.nextvanproto
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.nextvanproto.HomeScreen.Companion.adultCount
-import com.example.nextvanproto.HomeScreen.Companion.childCount
+import com.example.nextvanproto.SessionManager.adultCount
+import com.example.nextvanproto.SessionManager.childCount
 import com.example.nextvanproto.SessionManager.departDate
 import com.example.nextvanproto.SessionManager.returnDate
 import com.example.nextvanproto.databinding.ActivitySeatListBinding
+import okhttp3.*
+import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 class SeatListActivity : AppCompatActivity() {
+    private lateinit var webSocket: WebSocket
+    private val apiService = RetrofitClient.instance
     private lateinit var binding: ActivitySeatListBinding
     private lateinit var seatAdapter: SeatListAdapter
     private val seatList = mutableListOf<Seat>()
@@ -34,12 +40,38 @@ class SeatListActivity : AppCompatActivity() {
         binding = ActivitySeatListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupWebSocket()
         getIntentExtra()
         setVariable()
         initSeatList()
 
         // Handle "Proceed" button click
-        binding.button4.setOnClickListener {
+        binding.btnConfirmSeats.setOnClickListener {
+
+            val selectedSeats = seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
+
+            val request = ReserveSeatsRequest(routeId, selectedSeats)
+            val call = apiService.reserveSeats(request) // Ensure correct reference
+
+            call.enqueue(object : retrofit2.Callback<ReserveSeatsResponse> {
+                override fun onResponse(call: retrofit2.Call<ReserveSeatsResponse>, response: retrofit2.Response<ReserveSeatsResponse>) {
+                    Log.d("SeatReservation", "Response code: ${response.code()}")
+                    Log.d("SeatReservation", "Response body: ${response.body()?.toString()}")
+
+                    if (response.isSuccessful && response.body()?.status == "success") {
+                        val updatedSeats = response.body()?.reserved_seats?.split(",") ?: emptyList()
+                        updateSeatList(updatedSeats)
+                    } else {
+                        Toast.makeText(this@SeatListActivity, "Failed to reserve seats", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<ReserveSeatsResponse>, t: Throwable) {
+                    Toast.makeText(this@SeatListActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+
             val intent = Intent(this, TicketDetailActivity::class.java)
             intent.putExtra("selectedSeats", binding.tvSelectedSeat.text.toString())
             intent.putExtra("totalPrice", totalPrice)  // Pass calculated total price
@@ -59,7 +91,9 @@ class SeatListActivity : AppCompatActivity() {
     }
 
     private fun initSeatList() {
-        val reservedSeatsList = reservedSeats.split(",") // Convert to list
+        val reservedSeatsList = reservedSeats.split(",").map { it.trim() } // Trim spaces
+
+        seatList.clear() // Prevent duplicate seats
 
         for (i in 0 until 17) {
             val seatName = "No. ${i + 1}"
@@ -74,14 +108,14 @@ class SeatListActivity : AppCompatActivity() {
         seatAdapter = SeatListAdapter(seatList, this, object : SeatListAdapter.SelectedSeat {
             override fun Return(selectedNames: String, num: Int) {
                 binding.tvNumSelectedSeat.text = "$num Seat(s) Selected"
-                totalPrice = num * pricePerSeat  // Calculate based on price per seat
+                totalPrice = num * pricePerSeat  // Calculate total price
                 binding.tvPrice.text = "₱${String.format("%.2f", totalPrice)}"
                 binding.tvSelectedSeat.text = selectedNames
             }
         })
 
         binding.seatRecyclerview.apply {
-            val gridLayoutManager = GridLayoutManager(this@SeatListActivity, 6) // 6 spans total
+            val gridLayoutManager = GridLayoutManager(this@SeatListActivity, 6)
             layoutManager = gridLayoutManager
 
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -93,6 +127,7 @@ class SeatListActivity : AppCompatActivity() {
             adapter = seatAdapter
         }
     }
+
 
     private fun setVariable() {
         binding.imgBackBtn.setOnClickListener { finish() }
@@ -114,5 +149,44 @@ class SeatListActivity : AppCompatActivity() {
         reservedSeats = intent.getStringExtra("reserved_seats") ?: ""
 
         Log.d("SeatListActivity", "Received Intent Data: routeId=$routeId, companyName=$companyName, pricePerSeat=$pricePerSeat, reservedSeats=$reservedSeats")
+    }
+
+
+    private fun setupWebSocket() {
+        val client = OkHttpClient.Builder()
+            .readTimeout(0, TimeUnit.MILLISECONDS)
+            .build()
+
+        val request = Request.Builder().url("ws://192.168.100.16:8080").build()
+        val listener = object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                this@SeatListActivity.webSocket = webSocket
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                runOnUiThread {
+                    val json = JSONObject(text)
+                    val updatedSeats = json.getString("reserved_seats").split(",")
+                    updateSeatList(updatedSeats)
+                }
+            }
+        }
+        client.newWebSocket(request, listener)
+    }
+
+    private fun updateSeatList(updatedSeats: List<String>) {
+        for (seat in seatList) {
+            if (updatedSeats.contains(seat.name)) {
+                seat.status = Seat.SeatStatus.UNAVAILABLE
+            }
+        }
+        seatAdapter.notifyDataSetChanged()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::webSocket.isInitialized) {  // Check if webSocket is initialized
+            webSocket.close(1000, "Activity Destroyed")
+        }
     }
 }

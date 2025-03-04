@@ -15,6 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nextvanproto.SessionManager.adultCount
+import com.example.nextvanproto.SessionManager.childCount
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,11 +38,6 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var adapter: LocationAdapter
     private val locationList = mutableListOf<Location>()
     private var focusedSearchView: SearchView? = null // Track focused SearchView
-
-    companion object {
-        var adultCount = 0
-        var childCount = 0
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -268,8 +265,10 @@ class HomeScreen : AppCompatActivity() {
     private fun updateCount(isAdult: Boolean, isIncrement: Boolean) {
         if (isAdult) {
             if (isIncrement) adultCount++ else if (adultCount > 0) adultCount--
+
         } else {
-            if (isIncrement) childCount++ else if (childCount > 0) childCount--
+            if (isIncrement) childCount++ else if (childCount > 0) adultCount--
+
         }
         updateUI()
     }

@@ -25,6 +25,9 @@ interface ApiService {
 
     @GET("get_locations.php")
     fun getLocations(): Call<List<Location>>
+
+    @POST("reserved_seats.php")
+    fun reserveSeats(@Body request: ReserveSeatsRequest): Call<ReserveSeatsResponse>
 }
 
 
