@@ -18,21 +18,28 @@
         tools:targetApi="31">
         <activity
             android:name=".SearchResultActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".TicketDetailActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SeatListActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".HomeScreen"
-            android:exported="false" />
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".SignupScreen"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".LoginScreen"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

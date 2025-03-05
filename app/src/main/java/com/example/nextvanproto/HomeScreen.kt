@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,6 +39,8 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var adapter: LocationAdapter
     private val locationList = mutableListOf<Location>()
     private var focusedSearchView: SearchView? = null // Track focused SearchView
+    private var backPressedTime: Long = 0
+    private lateinit var backToast: Toast
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -204,6 +207,18 @@ class HomeScreen : AppCompatActivity() {
             }
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                    backToast.cancel()
+                    finishAffinity() // Finish all activities in the stack
+                } else {
+                    backToast = Toast.makeText(applicationContext, "Press again to exit", Toast.LENGTH_SHORT)
+                    backToast.show()
+                }
+                backPressedTime = System.currentTimeMillis()
+            }
+        })
 
 
     }

@@ -3,6 +3,7 @@ package com.example.nextvanproto
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -45,48 +46,57 @@ class SeatListActivity : AppCompatActivity() {
         setVariable()
         initSeatList()
 
-        // Handle "Proceed" button click
         binding.btnConfirmSeats.setOnClickListener {
 
-            val selectedSeats = seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
+            val selectedSeats =
+                seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
 
             val request = ReserveSeatsRequest(routeId, selectedSeats)
-            val call = apiService.reserveSeats(request) // Ensure correct reference
+            val call = apiService.reserveSeats(request)
 
             call.enqueue(object : retrofit2.Callback<ReserveSeatsResponse> {
-                override fun onResponse(call: retrofit2.Call<ReserveSeatsResponse>, response: retrofit2.Response<ReserveSeatsResponse>) {
+                override fun onResponse(
+                    call: retrofit2.Call<ReserveSeatsResponse>,
+                    response: retrofit2.Response<ReserveSeatsResponse>
+                ) {
                     Log.d("SeatReservation", "Response code: ${response.code()}")
                     Log.d("SeatReservation", "Response body: ${response.body()?.toString()}")
 
                     if (response.isSuccessful && response.body()?.status == "success") {
-                        val updatedSeats = response.body()?.reserved_seats?.split(",") ?: emptyList()
-                        updateSeatList(updatedSeats)
+                        Log.d("SeatReservation", "Seat reserved successfully.")
+                        val reservedSeatsList = response.body()?.reserved_seats ?: emptyList()
+                        updateSeatList(reservedSeatsList)
+
+                        // Move startActivity here after successful reservation
+                        val intent = Intent(this@SeatListActivity, TicketDetailActivity::class.java)
+                        intent.putExtra("selectedSeats", binding.tvSelectedSeat.text.toString())
+                        intent.putExtra("totalPrice", totalPrice)
+                        intent.putExtra("company_name", companyName)
+                        intent.putExtra("company_logo", companyLogo)
+                        intent.putExtra("from_location", fromLocation)
+                        intent.putExtra("to_location", toLocation)
+                        intent.putExtra("date", date)
+                        intent.putExtra("arrive_time", arriveTime)
+                        intent.putExtra("depart_date", departDate)
+                        intent.putExtra("return_date", returnDate)
+                        intent.putExtra("adult_count", adultCount)
+                        intent.putExtra("child_count", childCount)
+                        startActivity(intent)
                     } else {
-                        Toast.makeText(this@SeatListActivity, "Failed to reserve seats", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SeatListActivity,
+                            "Failed to reserve seats",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: retrofit2.Call<ReserveSeatsResponse>, t: Throwable) {
-                    Toast.makeText(this@SeatListActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    Log.e("SeatReservation", "Network Error: ${t.message}", t) // Log error message
+                    Toast.makeText(this@SeatListActivity, "Network error", Toast.LENGTH_SHORT)
+                        .show()
                 }
             })
-
-
-            val intent = Intent(this, TicketDetailActivity::class.java)
-            intent.putExtra("selectedSeats", binding.tvSelectedSeat.text.toString())
-            intent.putExtra("totalPrice", totalPrice)  // Pass calculated total price
-            intent.putExtra("totalPrice", totalPrice)
-            intent.putExtra("company_name", companyName)
-            intent.putExtra("company_logo", companyLogo)
-            intent.putExtra("from_location", fromLocation)
-            intent.putExtra("to_location", toLocation)
-            intent.putExtra("date", date)
-            intent.putExtra("arrive_time", arriveTime)
-            intent.putExtra("depart_date", departDate)
-            intent.putExtra("return_date", returnDate)
-            intent.putExtra("adult_count", adultCount)
-            intent.putExtra("child_count", childCount)
-            startActivity(intent)
         }
     }
 
@@ -147,8 +157,6 @@ class SeatListActivity : AppCompatActivity() {
         pricePerSeat = intent.getDoubleExtra("price", 0.0)  // Store price per seat
         numberSeat = intent.getIntExtra("number_seat", 0)
         reservedSeats = intent.getStringExtra("reserved_seats") ?: ""
-
-        Log.d("SeatListActivity", "Received Intent Data: routeId=$routeId, companyName=$companyName, pricePerSeat=$pricePerSeat, reservedSeats=$reservedSeats")
     }
 
 
@@ -158,6 +166,7 @@ class SeatListActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder().url("ws://192.168.100.16:8080").build()
+        //val request = Request.Builder().url("ws://192.168.43.163:8080").build()
         val listener = object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 this@SeatListActivity.webSocket = webSocket
@@ -166,9 +175,14 @@ class SeatListActivity : AppCompatActivity() {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 runOnUiThread {
                     val json = JSONObject(text)
-                    val updatedSeats = json.getString("reserved_seats").split(",")
-                    updateSeatList(updatedSeats)
+                    val updatedSeats = json.getJSONArray("reserved_seats")
+                    val updatedSeatList = mutableListOf<String>()
+                    for (i in 0 until updatedSeats.length()) {
+                        updatedSeatList.add(updatedSeats.getString(i))
+                    }
+                    updateSeatList(updatedSeatList)
                 }
+
             }
         }
         client.newWebSocket(request, listener)
