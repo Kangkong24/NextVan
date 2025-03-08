@@ -1,6 +1,7 @@
 [versions]
 compiler = "4.15.1"
 glide = "4.15.1"
+materialVersion = "1.9.0"
 retrofit = "2.9.0"
 agp = "8.8.0"
 kotlin = "1.9.24"
@@ -19,6 +20,7 @@ swiperefreshlayout = "1.1.0"
 [libraries]
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -2,9 +2,11 @@ package com.example.nextvanproto
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,7 @@ import retrofit2.Response
 class SearchResultActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var tvSelectItemPrompt: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +28,8 @@ class SearchResultActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.searchView)
         progressBar = findViewById(R.id.progressBar)
+        tvSelectItemPrompt = findViewById(R.id.tvSelectItemPrompt)
+        tvSelectItemPrompt.visibility = View.VISIBLE
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -32,6 +37,13 @@ class SearchResultActivity : AppCompatActivity() {
 
         val backBtn = findViewById<ImageView>(R.id.imgBack)
         backBtn.setOnClickListener { finish() }
+
+        recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                tvSelectItemPrompt.visibility = View.GONE
+                return false
+            }
+        })
     }
 
     private fun fetchRoutes() {

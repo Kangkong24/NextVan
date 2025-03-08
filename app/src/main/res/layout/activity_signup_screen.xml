@@ -12,7 +12,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Create your Account"
         android:textColor="@color/light_blue"
         android:textSize="20sp"
@@ -25,13 +25,13 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="129dp"
         android:text="Please fill in your details to create your account."
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView7"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
@@ -51,6 +51,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="94dp"
         android:background="@drawable/border_radious"
+        android:inputType="text"
         android:hint="John Doe"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,7 +78,6 @@
         android:inputType="textEmailAddress"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etName" />
 
@@ -101,9 +101,22 @@
         android:inputType="textPassword"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+    <ImageView
+        android:id="@+id/ivTogglePassword"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp"
+        android:src="@drawable/ic_eye_closed"
+        android:contentDescription="Toggle password visibility"
+        app:layout_constraintBottom_toBottomOf="@+id/etPassword"
+        app:layout_constraintEnd_toEndOf="@+id/etPassword" />
 
     <TextView
         android:id="@+id/textView10"
@@ -125,9 +138,23 @@
         android:inputType="textPassword"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.475"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+
+    <ImageView
+        android:id="@+id/ivToggleConfirmPassword"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp"
+        android:src="@drawable/ic_eye_closed"
+        android:contentDescription="Toggle confirm password visibility"
+        app:layout_constraintBottom_toBottomOf="@+id/etCPassword"
+        app:layout_constraintEnd_toEndOf="@+id/etCPassword" />
+
 
     <Button
         android:id="@+id/btnCreate"
@@ -145,12 +172,24 @@
         android:id="@+id/tv_already"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Login"
+        android:textColor="@color/light_blue"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_alreadyHave"
+        app:layout_constraintStart_toEndOf="@+id/tv_alreadyHave" />
+
+
+    <TextView
+        android:id="@+id/tv_alreadyHave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
         android:text="Already have an account?"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCreate" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

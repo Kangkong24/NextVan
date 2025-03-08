@@ -66,11 +66,5 @@ class TicketDetailActivity : AppCompatActivity() {
         val tvUsername = findViewById<TextView>(R.id.user_name)
         tvUsername.text = userName
 
-        val backBtn = findViewById<ImageView>(R.id.imageView6)
-
-        backBtn.setOnClickListener{
-            finish()
-        }
-
     }
 }

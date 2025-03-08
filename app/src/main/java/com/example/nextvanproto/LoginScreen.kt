@@ -2,9 +2,12 @@ package com.example.nextvanproto
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +25,8 @@ class LoginScreen : AppCompatActivity() {
     private lateinit var btnLogin: Button
     private lateinit var tvDont: TextView
     private lateinit var tvForgotPassword: TextView
+    private lateinit var ivTogglePassword: ImageView
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,26 @@ class LoginScreen : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         tvDont = findViewById(R.id.tvDont)
         tvForgotPassword = findViewById(R.id.textView5)
+
+        ivTogglePassword = findViewById(R.id.ivTogglePassword)
+
+        ivTogglePassword.setOnClickListener {
+            togglePasswordVisibility()
+        }
+    }
+
+    private fun togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Hide Password
+            etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_closed) // Change icon
+        } else {
+            // Show Password
+            etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_open) // Change icon
+        }
+        isPasswordVisible = !isPasswordVisible
+        etPassword.setSelection(etPassword.text.length) // Keep cursor at end
     }
 
     private fun setupClickListeners() {

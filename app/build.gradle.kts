@@ -59,6 +59,7 @@ dependencies {
     implementation("com.tbuonomo:dotsindicator:4.3")
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+    implementation(libs.material.v190)
 
 
 }

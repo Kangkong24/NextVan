@@ -3,7 +3,9 @@ package com.example.nextvanproto
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,6 +24,7 @@ class SeatListActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySeatListBinding
     private lateinit var seatAdapter: SeatListAdapter
     private val seatList = mutableListOf<Seat>()
+    private lateinit var progressBar: ProgressBar
 
     // Route data variables
     private var routeId: Int = -1
@@ -45,20 +48,32 @@ class SeatListActivity : AppCompatActivity() {
         getIntentExtra()
         setVariable()
         initSeatList()
+        progressBar = findViewById(R.id.progressBar)
 
         binding.btnConfirmSeats.setOnClickListener {
 
             val selectedSeats =
                 seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
 
+            if (selectedSeats.isEmpty()) {
+                Toast.makeText(this, "Please select seat accordingly", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val request = ReserveSeatsRequest(routeId, selectedSeats)
             val call = apiService.reserveSeats(request)
+            binding.loadingOverlay.visibility = View.VISIBLE
+
+
+
 
             call.enqueue(object : retrofit2.Callback<ReserveSeatsResponse> {
                 override fun onResponse(
                     call: retrofit2.Call<ReserveSeatsResponse>,
                     response: retrofit2.Response<ReserveSeatsResponse>
+
                 ) {
+                    binding.loadingOverlay.visibility = View.GONE
                     Log.d("SeatReservation", "Response code: ${response.code()}")
                     Log.d("SeatReservation", "Response body: ${response.body()?.toString()}")
 
@@ -130,12 +145,16 @@ class SeatListActivity : AppCompatActivity() {
 
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (position < 2) 3 else 2
+                    return when (position) {
+                        0, 1 -> 3 // Row 1: 2 items, each taking 3 spans (centered)
+                        else -> 2 // Other rows: 3 items per row, each taking 2 spans
+                    }
                 }
             }
 
             adapter = seatAdapter
         }
+
     }
 
 
@@ -165,8 +184,8 @@ class SeatListActivity : AppCompatActivity() {
             .readTimeout(0, TimeUnit.MILLISECONDS)
             .build()
 
+        //val request = Request.Builder().url("ws://192.168.152.201:8080").build()
         val request = Request.Builder().url("ws://192.168.100.16:8080").build()
-        //val request = Request.Builder().url("ws://192.168.43.163:8080").build()
         val listener = object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 this@SeatListActivity.webSocket = webSocket

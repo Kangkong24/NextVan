@@ -3,9 +3,12 @@ package com.example.nextvanproto
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +28,9 @@ class SignupScreen : AppCompatActivity() {
     private lateinit var btnCreate: Button
     private lateinit var tvAlready: TextView
 
+    private lateinit var ivTogglePassword: ImageView
+    private lateinit var ivToggleConfirmPassword: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,6 +48,29 @@ class SignupScreen : AppCompatActivity() {
         etCPassword = findViewById(R.id.etCPassword)
         tvAlready = findViewById(R.id.tv_already)
         btnCreate = findViewById(R.id.btnCreate)
+        ivTogglePassword = findViewById(R.id.ivTogglePassword)
+        ivToggleConfirmPassword = findViewById(R.id.ivToggleConfirmPassword)
+
+        ivTogglePassword.setOnClickListener {
+            togglePasswordVisibility(etPassword, ivTogglePassword)
+        }
+
+        ivToggleConfirmPassword.setOnClickListener {
+            togglePasswordVisibility(etCPassword, ivToggleConfirmPassword)
+        }
+    }
+
+    private fun togglePasswordVisibility(editText: EditText, toggleIcon: ImageView) {
+        if (editText.transformationMethod is PasswordTransformationMethod) {
+            // Show Password
+            editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            toggleIcon.setImageResource(R.drawable.ic_eye_open) // Show icon
+        } else {
+            // Hide Password
+            editText.transformationMethod = PasswordTransformationMethod.getInstance()
+            toggleIcon.setImageResource(R.drawable.ic_eye_closed) // Hide icon
+        }
+        editText.setSelection(editText.text.length) // Keep cursor at the end
     }
 
     private fun setupButtonListeners() {

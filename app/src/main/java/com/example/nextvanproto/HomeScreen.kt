@@ -282,7 +282,7 @@ class HomeScreen : AppCompatActivity() {
             if (isIncrement) adultCount++ else if (adultCount > 0) adultCount--
 
         } else {
-            if (isIncrement) childCount++ else if (childCount > 0) adultCount--
+            if (isIncrement) childCount++ else if (childCount > 0) childCount--
 
         }
         updateUI()
