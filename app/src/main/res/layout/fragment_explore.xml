@@ -51,6 +51,8 @@
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyle"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/light_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

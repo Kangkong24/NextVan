@@ -2,6 +2,8 @@ package com.example.nextvanproto
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -31,6 +33,15 @@ interface ApiService {
 
     @POST("book_ticket.php")
     fun bookTicket(@Body request: BookTicketRequest): Call<BookTicketResponse>
+
+    @POST("forgot_password.php")
+    fun forgotPassword(@Body request: OtpRequest): Call<ForgotPasswordResponse>
+
+    @POST("verify_otp.php")
+    fun verifyOtp(@Body request: VerifyOtpRequest): Call<OtpVerificationResponse>
+
+    @POST("reset_password.php")
+    fun resetPassword(@Body request: ResetPasswordRequest): Call<ForgotPasswordResponse>
 
 }
 

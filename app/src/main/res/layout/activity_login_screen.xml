@@ -142,4 +142,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvDontHaveAccount"
         app:layout_constraintStart_toEndOf="@+id/tvDontHaveAccount" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frame_container"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

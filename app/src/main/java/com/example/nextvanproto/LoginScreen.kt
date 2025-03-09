@@ -78,12 +78,14 @@ class LoginScreen : AppCompatActivity() {
             finish()
         }
 
-       /* tvForgotPassword.setOnClickListener {
-            // Still need to implement forgot password logic
-            startActivity(Intent(this, HomeScreen::class.java))
-            finish()
-            Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show()
-        }*/
+        tvForgotPassword.setOnClickListener {
+            val fragment = ForgotPasswordFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_container, fragment) // Ensure this container ID is correct
+                .addToBackStack(null) // Allows back navigation
+                .commit()
+
+        }
     }
 
     private fun validateInputs(): Boolean {
