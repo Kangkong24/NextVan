@@ -76,6 +76,7 @@ class SearchResultActivity : AppCompatActivity() {
     private fun navigateToSeatList(route: Route) {
         val intent = Intent(this, SeatListActivity::class.java).apply {
             putExtra("route_id", route.id)
+            putExtra("company_id", route.company_id)
             putExtra("company_logo", route.company_logo)
             putExtra("company_name", route.company_name)
             putExtra("arrive_time", route.arrive_time)

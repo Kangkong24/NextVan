@@ -12,6 +12,7 @@ data class Route(
     val price: Double,
     val reserved_seats: String,
     val to_location: String,
-    val to_short: String
+    val to_short: String,
+    val company_id: Int,
 )
 

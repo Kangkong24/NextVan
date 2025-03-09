@@ -28,6 +28,10 @@ interface ApiService {
 
     @POST("reserved_seats.php")
     fun reserveSeats(@Body request: ReserveSeatsRequest): Call<ReserveSeatsResponse>
+
+    @POST("book_ticket.php")
+    fun bookTicket(@Body request: BookTicketRequest): Call<BookTicketResponse>
+
 }
 
 

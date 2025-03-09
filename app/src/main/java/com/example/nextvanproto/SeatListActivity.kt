@@ -14,6 +14,7 @@ import com.example.nextvanproto.SessionManager.childCount
 import com.example.nextvanproto.SessionManager.departDate
 import com.example.nextvanproto.SessionManager.returnDate
 import com.example.nextvanproto.databinding.ActivitySeatListBinding
+import com.google.gson.Gson
 import okhttp3.*
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
@@ -28,6 +29,7 @@ class SeatListActivity : AppCompatActivity() {
 
     // Route data variables
     private var routeId: Int = -1
+    private var companyId: Int = -1
     private var companyLogo: String = ""
     private var companyName: String = ""
     private var arriveTime: String = ""
@@ -44,6 +46,7 @@ class SeatListActivity : AppCompatActivity() {
         binding = ActivitySeatListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        SessionManager.init(this)
         setupWebSocket()
         getIntentExtra()
         setVariable()
@@ -51,52 +54,29 @@ class SeatListActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
         binding.btnConfirmSeats.setOnClickListener {
-
             val selectedSeats =
                 seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
 
             if (selectedSeats.isEmpty()) {
-                Toast.makeText(this, "Please select seat accordingly", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please select at least one seat", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val request = ReserveSeatsRequest(routeId, selectedSeats)
-            val call = apiService.reserveSeats(request)
+            val reserveRequest = ReserveSeatsRequest(routeId, selectedSeats)
+            val reserveCall = apiService.reserveSeats(reserveRequest)
             binding.loadingOverlay.visibility = View.VISIBLE
 
-
-
-
-            call.enqueue(object : retrofit2.Callback<ReserveSeatsResponse> {
+            reserveCall.enqueue(object : retrofit2.Callback<ReserveSeatsResponse> {
                 override fun onResponse(
                     call: retrofit2.Call<ReserveSeatsResponse>,
                     response: retrofit2.Response<ReserveSeatsResponse>
-
                 ) {
                     binding.loadingOverlay.visibility = View.GONE
-                    Log.d("SeatReservation", "Response code: ${response.code()}")
-                    Log.d("SeatReservation", "Response body: ${response.body()?.toString()}")
-
                     if (response.isSuccessful && response.body()?.status == "success") {
                         Log.d("SeatReservation", "Seat reserved successfully.")
-                        val reservedSeatsList = response.body()?.reserved_seats ?: emptyList()
-                        updateSeatList(reservedSeatsList)
 
-                        // Move startActivity here after successful reservation
-                        val intent = Intent(this@SeatListActivity, TicketDetailActivity::class.java)
-                        intent.putExtra("selectedSeats", binding.tvSelectedSeat.text.toString())
-                        intent.putExtra("totalPrice", totalPrice)
-                        intent.putExtra("company_name", companyName)
-                        intent.putExtra("company_logo", companyLogo)
-                        intent.putExtra("from_location", fromLocation)
-                        intent.putExtra("to_location", toLocation)
-                        intent.putExtra("date", date)
-                        intent.putExtra("arrive_time", arriveTime)
-                        intent.putExtra("depart_date", departDate)
-                        intent.putExtra("return_date", returnDate)
-                        intent.putExtra("adult_count", adultCount)
-                        intent.putExtra("child_count", childCount)
-                        startActivity(intent)
+                        // Proceed to book the ticket only if seat reservation is successful
+                        bookTicket(selectedSeats)
                     } else {
                         Toast.makeText(
                             this@SeatListActivity,
@@ -107,7 +87,8 @@ class SeatListActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: retrofit2.Call<ReserveSeatsResponse>, t: Throwable) {
-                    Log.e("SeatReservation", "Network Error: ${t.message}", t) // Log error message
+                    binding.loadingOverlay.visibility = View.GONE
+                    Log.e("SeatReservation", "Network Error: ${t.message}", t)
                     Toast.makeText(this@SeatListActivity, "Network error", Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -115,7 +96,8 @@ class SeatListActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSeatList() {
+
+        private fun initSeatList() {
         val reservedSeatsList = reservedSeats.split(",").map { it.trim() } // Trim spaces
 
         seatList.clear() // Prevent duplicate seats
@@ -167,6 +149,7 @@ class SeatListActivity : AppCompatActivity() {
 
         // Retrieve values from Intent
         routeId = intent.getIntExtra("route_id", -1)
+        companyId = intent.getIntExtra("company_id", -1)
         companyLogo = intent.getStringExtra("company_logo") ?: ""
         companyName = intent.getStringExtra("company_name") ?: ""
         arriveTime = intent.getStringExtra("arrive_time") ?: ""
@@ -222,4 +205,88 @@ class SeatListActivity : AppCompatActivity() {
             webSocket.close(1000, "Activity Destroyed")
         }
     }
+
+    // Function to book ticket after successful seat reservation
+    private fun bookTicket(selectedSeats: List<String>) {
+        val userId = SessionManager.userId // Retrieve logged-in user ID
+
+        if (userId == -1) {
+            Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val bookRequest = BookTicketRequest(
+            userId,
+            routeId,
+            companyId,
+            selectedSeats,
+            totalPrice,
+            departDate ?: "",
+            returnDate ?: ""
+        )
+
+        val requestBody = Gson().toJson(bookRequest)
+        Log.e("TicketBooking", "Sending JSON: $requestBody")
+        Log.d("BookTicket", "Sending data: $bookRequest")
+
+        val bookCall = apiService.bookTicket(bookRequest)
+        binding.loadingOverlay.visibility = View.VISIBLE
+
+        bookCall.enqueue(object : retrofit2.Callback<BookTicketResponse> {
+            override fun onResponse(
+                call: retrofit2.Call<BookTicketResponse>,
+                response: retrofit2.Response<BookTicketResponse>
+            ) {
+                binding.loadingOverlay.visibility = View.GONE
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody?.status == "success") {
+                        Log.d("BookTicket", "Booking successful!")
+                        Toast.makeText(
+                            this@SeatListActivity,
+                            "Ticket booked successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        // Move to TicketDetailActivity after successful booking
+                        val intent = Intent(this@SeatListActivity, TicketDetailActivity::class.java)
+                        intent.putExtra("selectedSeats", selectedSeats.joinToString(", "))
+                        intent.putExtra("totalPrice", totalPrice)
+                        intent.putExtra("company_name", companyName)
+                        intent.putExtra("company_logo", companyLogo)
+                        intent.putExtra("from_location", fromLocation)
+                        intent.putExtra("to_location", toLocation)
+                        intent.putExtra("date", date)
+                        intent.putExtra("arrive_time", arriveTime)
+                        intent.putExtra("depart_date", departDate)
+                        intent.putExtra("return_date", returnDate)
+                        intent.putExtra("adult_count", adultCount)
+                        intent.putExtra("child_count", childCount)
+                        startActivity(intent)
+                    } else {
+                        val errorMessage = responseBody?.message ?: response.errorBody()?.string()
+                        Log.e("TicketBooking", "Booking failed: ${responseBody?.message}")
+                        Toast.makeText(
+                            this@SeatListActivity,
+                            responseBody?.message ?: "Failed to book ticket $errorMessage",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    Log.e("TicketBooking", "Unexpected Response: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@SeatListActivity, "Failed to book ticket", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<BookTicketResponse>, t: Throwable) {
+                binding.loadingOverlay.visibility = View.GONE
+                Log.e("TicketBooking", "Network Error: ${t.message}", t)
+                Toast.makeText(this@SeatListActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
+    }
+
+
 }

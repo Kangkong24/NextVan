@@ -142,6 +142,7 @@ class LoginScreen : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", true)
+        editor.putInt("userId", user.id)
         editor.putString("userName", user.name)  // Save user's name
         editor.putString("userEmail", user.email)
         editor.apply()
