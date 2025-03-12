@@ -58,7 +58,7 @@ class SeatListActivity : AppCompatActivity() {
                 seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
 
             if (selectedSeats.isEmpty()) {
-                Toast.makeText(this, "Please select at least one seat", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please select seat accordingly", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -98,48 +98,40 @@ class SeatListActivity : AppCompatActivity() {
 
 
         private fun initSeatList() {
-        val reservedSeatsList = reservedSeats.split(",").map { it.trim() } // Trim spaces
+            val reservedSeatsList = reservedSeats.split(",").map { it.trim() } // Trim spaces
 
-        seatList.clear() // Prevent duplicate seats
+            seatList.clear() // Prevent duplicate seats
 
-        for (i in 0 until 17) {
-            val seatName = "No. ${i + 1}"
-            val seatStatus = if (reservedSeatsList.contains(seatName)) {
-                Seat.SeatStatus.UNAVAILABLE
-            } else {
-                Seat.SeatStatus.AVAILABLE
+            for (i in 0 until 17) {
+                val seatName = "No. ${i + 1}"
+                val seatStatus = if (reservedSeatsList.contains(seatName)) {
+                    Seat.SeatStatus.UNAVAILABLE
+                } else {
+                    Seat.SeatStatus.AVAILABLE
+                }
+                seatList.add(Seat(seatStatus, seatName))
             }
-            seatList.add(Seat(seatStatus, seatName))
-        }
 
-        seatAdapter = SeatListAdapter(seatList, this, object : SeatListAdapter.SelectedSeat {
-            override fun Return(selectedNames: String, num: Int) {
-                binding.tvNumSelectedSeat.text = "$num Seat(s) Selected"
-                totalPrice = num * pricePerSeat  // Calculate total price
-                binding.tvPrice.text = "₱${String.format("%.2f", totalPrice)}"
-                binding.tvSelectedSeat.text = selectedNames
-            }
-        })
+            seatAdapter = SeatListAdapter(seatList, this, object : SeatListAdapter.SelectedSeat {
+                override fun Return(selectedNames: String, num: Int) {
+                    binding.tvNumSelectedSeat.text = "$num Seat(s) Selected"
+                    totalPrice = num * pricePerSeat  // Calculate total price
+                    binding.tvPrice.text = "₱${String.format("%.2f", totalPrice)}"
+                    binding.tvSelectedSeat.text = selectedNames
+                }
+            })
 
-        binding.seatRecyclerview.apply {
-            val gridLayoutManager = GridLayoutManager(this@SeatListActivity, 6)
-            layoutManager = gridLayoutManager
-
-            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return when (position) {
-                        0, 1 -> 3 // Row 1: 2 items, each taking 3 spans (centered)
-                        else -> 2 // Other rows: 3 items per row, each taking 2 spans
+            binding.seatRecyclerview.apply {
+                val gridLayoutManager = GridLayoutManager(this@SeatListActivity, 3)
+                layoutManager = gridLayoutManager
+                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return 1 // Each item takes 1 span
                     }
                 }
+                adapter = seatAdapter
             }
-
-            adapter = seatAdapter
         }
-
-    }
-
-
     private fun setVariable() {
         binding.imgBackBtn.setOnClickListener { finish() }
     }

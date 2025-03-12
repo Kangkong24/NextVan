@@ -1,5 +1,6 @@
 package com.example.nextvanproto
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,6 +31,15 @@ class TicketDetailActivity : AppCompatActivity() {
         val adultCount = intent.getIntExtra("adult_count", 0)
         val childCount = intent.getIntExtra("child_count", 0)
 
+
+        val closeBtn = findViewById<ImageView>(R.id.imgCloseBtn)
+        closeBtn.setOnClickListener {
+            SessionManager.clearBookingData()
+            val intent = Intent(this, HomeScreen::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish() // Close current activity
+        }
 
 
         binding.apply {

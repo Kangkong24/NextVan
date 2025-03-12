@@ -8,6 +8,6 @@
     <style name="Theme.NextVanProto" parent="Base.Theme.NextVanProto" />
 
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/light_blue</item>
+        <item name="android:color">@color/white</item>
     </style>
 </resources>

@@ -187,22 +187,19 @@
 
                             <ImageView
                                 android:id="@+id/imgPassenger"
-                                android:layout_width="48dp"
+                                android:layout_width="40dp"
                                 android:layout_height="38dp"
                                 android:layout_gravity="center"
                                 app:srcCompat="@drawable/passenger_ic" />
 
-                            <TextView
+                            <ImageView
                                 android:id="@+id/tvAdultMinus"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_width="18dp"
+                                android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="-"
-                                android:textColor="@color/black"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:src="@drawable/minus_btn"/>
 
                             <TextView
                                 android:id="@+id/tvAdultCount"
@@ -212,17 +209,14 @@
                                 android:text="0 Adult"
                                 android:textColor="@color/black" />
 
-                            <TextView
+                            <ImageView
                                 android:id="@+id/tvAdultPlus"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_width="18dp"
+                                android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="+"
-                                android:textColor="@color/black"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:src="@drawable/plus_btn"/>
 
 
                         </LinearLayout>
@@ -258,22 +252,19 @@
 
                             <ImageView
                                 android:id="@+id/imgPassengers"
-                                android:layout_width="48dp"
+                                android:layout_width="40dp"
                                 android:layout_height="38dp"
                                 android:layout_gravity="center"
                                 app:srcCompat="@drawable/passenger_ic" />
 
-                            <TextView
+                            <ImageView
                                 android:id="@+id/tvMinusChild"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_width="18dp"
+                                android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="-"
-                                android:textColor="@color/black"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:src="@drawable/minus_btn"/>
 
                             <TextView
                                 android:id="@+id/tvChildCount"
@@ -283,17 +274,14 @@
                                 android:text="0 Child"
                                 android:textColor="@color/black" />
 
-                            <TextView
+                            <ImageView
                                 android:id="@+id/tvPlusChild"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_width="18dp"
+                                android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="+"
-                                android:textColor="@color/black"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:src="@drawable/plus_btn"/>
 
                         </LinearLayout>
 
@@ -421,16 +409,16 @@
     </ScrollView>
 
     <FrameLayout
+        android:id="@+id/frame_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/frame_container"/>
+        android:layout_height="match_parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:itemIconTint="@color/darker_grey"
+        app:itemIconTint="@color/dark"
         app:itemTextColor="@color/light_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

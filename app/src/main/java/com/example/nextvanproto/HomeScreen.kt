@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -27,11 +28,11 @@ import java.util.Calendar
 class HomeScreen : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
-    private lateinit var tvAdultMinus: TextView
-    private lateinit var tvAdultPlus: TextView
+    private lateinit var tvAdultMinus: ImageView
+    private lateinit var tvAdultPlus: ImageView
     private lateinit var tvAdultCount: TextView
-    private lateinit var tvChildMinus: TextView
-    private lateinit var tvChildPlus: TextView
+    private lateinit var tvChildMinus: ImageView
+    private lateinit var tvChildPlus: ImageView
     private lateinit var tvChildCount: TextView
     private lateinit var svFrom: SearchView
     private lateinit var svTo: SearchView
@@ -55,7 +56,7 @@ class HomeScreen : AppCompatActivity() {
         tvChildPlus = findViewById(R.id.tvPlusChild)
         tvChildCount = findViewById(R.id.tvChildCount)
 
-        // Load session values
+        SessionManager.init(this)
         updateUI()
 
         tvAdultMinus.setOnClickListener { updateCount(isAdult = true, isIncrement = false) }
@@ -155,9 +156,12 @@ class HomeScreen : AppCompatActivity() {
                 val formattedDate = String.format("%02d-%02d-%d", selectedDay, selectedMonth + 1, selectedYear)
                 etReturnDate.setText(formattedDate)
 
-                // Saved selected date in SessionManager
+                // Save selected date in SessionManager
                 SessionManager.returnDate = formattedDate
             }, year, month, day)
+
+            // Set the minimum date to today to exclude past dates
+            datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
             datePickerDialog.show()
         }
@@ -176,8 +180,12 @@ class HomeScreen : AppCompatActivity() {
                 SessionManager.departDate = formattedDate
             }, year, month, day)
 
+            // Set the minimum date to today to exclude past dates
+            datePickerDialog.datePicker.minDate = calendar.timeInMillis
+
             datePickerDialog.show()
         }
+
 
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
@@ -278,15 +286,28 @@ class HomeScreen : AppCompatActivity() {
 
 
     private fun updateCount(isAdult: Boolean, isIncrement: Boolean) {
-        if (isAdult) {
-            if (isIncrement) adultCount++ else if (adultCount > 0) adultCount--
+        val totalCount = adultCount + childCount
 
+        if (isIncrement) {
+            // Check if the total count will exceed 17
+            if (totalCount < 17) {
+                if (isAdult && adultCount < 17) {
+                    adultCount++
+                } else if (!isAdult && childCount < 17) {
+                    childCount++
+                }
+            }
         } else {
-            if (isIncrement) childCount++ else if (childCount > 0) childCount--
-
+            // Decrement only if greater than 0
+            if (isAdult && adultCount > 0) {
+                adultCount--
+            } else if (!isAdult && childCount > 0) {
+                childCount--
+            }
         }
         updateUI()
     }
+
 
     private fun updateUI() {
         tvAdultCount.text = "$adultCount Adult"

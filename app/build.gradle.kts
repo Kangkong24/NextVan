@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
     implementation(libs.material.v190)
+    implementation("io.github.chaosleung:pinview:1.4.4")
 
 
 }

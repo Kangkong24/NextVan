@@ -2,12 +2,16 @@ package com.example.nextvanproto
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,13 +19,18 @@ import retrofit2.Response
 
 class ForgotPasswordFragment : Fragment() {
 
+    private lateinit var backBtn: ImageView
     private lateinit var etEmail: EditText
     private lateinit var btnSendOtp: Button
+    private lateinit var tvOtp: TextView
+    private lateinit var tvChange: TextView
     private lateinit var etOtp: EditText
     private lateinit var btnVerifyOtp: Button
     private lateinit var etNewPassword: EditText
     private lateinit var etConfirmPassword: EditText
     private lateinit var btnSubmitPassword: Button
+    private lateinit var ivToggleNewPassword: ImageView
+    private lateinit var ivToggleConfirmPassword: ImageView
 
     private var email: String? = null
     private var otp: Int? = null
@@ -32,13 +41,19 @@ class ForgotPasswordFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_forgot_password, container, false)
 
+        backBtn = view.findViewById(R.id.imgBack)
         etEmail = view.findViewById(R.id.etEmailForgotPassword)
+        tvOtp = view.findViewById(R.id.tvOtp)
+        tvChange = view.findViewById(R.id.tvChange)
         btnSendOtp = view.findViewById(R.id.btnSendOtp)
         etOtp = view.findViewById(R.id.etOtp)
         btnVerifyOtp = view.findViewById(R.id.btnVerifyOtp)
         etNewPassword = view.findViewById(R.id.etNewPassword)
         etConfirmPassword = view.findViewById(R.id.etConfirmPassword)
         btnSubmitPassword = view.findViewById(R.id.btnSubmitPassword)
+        ivToggleNewPassword = view.findViewById(R.id.ivToggleNewPassword)
+        ivToggleConfirmPassword = view.findViewById(R.id.ivToggleConfirmPassword)
+
 
         // Initially hide OTP and password reset fields
         etOtp.visibility = View.GONE
@@ -46,6 +61,25 @@ class ForgotPasswordFragment : Fragment() {
         etNewPassword.visibility = View.GONE
         etConfirmPassword.visibility = View.GONE
         btnSubmitPassword.visibility = View.GONE
+        tvOtp.visibility = View.GONE
+        tvChange.visibility = View.GONE
+        ivToggleNewPassword.visibility = View.GONE
+        ivToggleConfirmPassword.visibility = View.GONE
+
+
+        backBtn.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        ivToggleNewPassword.setOnClickListener {
+            togglePasswordVisibility(etNewPassword, ivToggleNewPassword)
+        }
+
+        ivToggleConfirmPassword.setOnClickListener {
+            togglePasswordVisibility(etConfirmPassword, ivToggleConfirmPassword)
+        }
+
+
 
         btnSendOtp.setOnClickListener {
             email = etEmail.text.toString().trim()
@@ -80,6 +114,19 @@ class ForgotPasswordFragment : Fragment() {
         return view
     }
 
+    private fun togglePasswordVisibility(editText: EditText, toggleIcon: ImageView) {
+        if (editText.transformationMethod is PasswordTransformationMethod) {
+            // Show Password
+            editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            toggleIcon.setImageResource(R.drawable.ic_eye_open) // Show icon
+        } else {
+            // Hide Password
+            editText.transformationMethod = PasswordTransformationMethod.getInstance()
+            toggleIcon.setImageResource(R.drawable.ic_eye_closed) // Hide icon
+        }
+        editText.setSelection(editText.text.length) // Keep cursor at the end
+    }
+
     private fun sendOtpRequest(email: String) {
         val request = OtpRequest(email)
 
@@ -91,6 +138,7 @@ class ForgotPasswordFragment : Fragment() {
                             .show()
 
                         // Show OTP field
+                        tvOtp.visibility = View.VISIBLE
                         etOtp.visibility = View.VISIBLE
                         btnVerifyOtp.visibility = View.VISIBLE
                     } else {
@@ -115,6 +163,9 @@ class ForgotPasswordFragment : Fragment() {
             override fun onResponse(call: Call<OtpVerificationResponse>, response: Response<OtpVerificationResponse>) {
                 if (response.isSuccessful && response.body()?.success == true) {
                     Toast.makeText(requireContext(), "OTP Verified. Set new password.", Toast.LENGTH_LONG).show()
+                    ivToggleNewPassword.visibility = View.VISIBLE
+                    ivToggleConfirmPassword.visibility = View.VISIBLE
+                    tvChange.visibility = View.GONE
                     etNewPassword.visibility = View.VISIBLE
                     etConfirmPassword.visibility = View.VISIBLE
                     btnSubmitPassword.visibility = View.VISIBLE
