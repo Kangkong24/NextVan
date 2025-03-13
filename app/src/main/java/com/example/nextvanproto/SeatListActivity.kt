@@ -198,10 +198,18 @@ class SeatListActivity : AppCompatActivity() {
         }
     }
 
+    private fun generateReferenceNumber(): String {
+        val timestamp = System.currentTimeMillis().toString().takeLast(6) // Last 6 digits of timestamp
+        val randomPart = (1..4)
+            .map { ('A'..'Z').random() } // Generates 4 random uppercase letters
+            .joinToString("")
+        return "TKT-$randomPart$timestamp"
+    }
+
     // Function to book ticket after successful seat reservation
     private fun bookTicket(selectedSeats: List<String>) {
         val userId = SessionManager.userId // Retrieve logged-in user ID
-
+        val referenceNumber = generateReferenceNumber()
         if (userId == -1) {
             Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show()
             return
@@ -214,7 +222,8 @@ class SeatListActivity : AppCompatActivity() {
             selectedSeats,
             totalPrice,
             departDate ?: "",
-            returnDate ?: ""
+            returnDate ?: "",
+            referenceNumber
         )
 
         val requestBody = Gson().toJson(bookRequest)
@@ -254,6 +263,7 @@ class SeatListActivity : AppCompatActivity() {
                         intent.putExtra("return_date", returnDate)
                         intent.putExtra("adult_count", adultCount)
                         intent.putExtra("child_count", childCount)
+                        intent.putExtra("reference_number", referenceNumber)
                         startActivity(intent)
                     } else {
                         val errorMessage = responseBody?.message ?: response.errorBody()?.string()

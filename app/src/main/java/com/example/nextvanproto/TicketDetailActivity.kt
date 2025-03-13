@@ -1,12 +1,20 @@
 package com.example.nextvanproto
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
+import android.os.Environment
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.example.nextvanproto.databinding.ActivityTicketDetailBinding
+import java.io.File
+import java.io.FileOutputStream
 
 
 class TicketDetailActivity : AppCompatActivity() {
@@ -30,6 +38,7 @@ class TicketDetailActivity : AppCompatActivity() {
         val returnDate = intent.getStringExtra("return_date")?: ""
         val adultCount = intent.getIntExtra("adult_count", 0)
         val childCount = intent.getIntExtra("child_count", 0)
+        val referenceNumber = intent.getStringExtra("reference_number")?: ""
 
 
         val closeBtn = findViewById<ImageView>(R.id.imgCloseBtn)
@@ -67,7 +76,11 @@ class TicketDetailActivity : AppCompatActivity() {
             tvAdultCount.text = "Adult: $adultCount"
             tvChildCount.text = "Child: $childCount"
 
-            tvBarcodeNum.text = "TKT-${System.currentTimeMillis()}"
+            tvBarcodeNum.text = "${referenceNumber}"
+
+            binding.downloadBtn.setOnClickListener {
+                generatePDF()
+            }
         }
 
 
@@ -77,4 +90,38 @@ class TicketDetailActivity : AppCompatActivity() {
         tvUsername.text = userName
 
     }
+    private fun generatePDF() {
+        val view = binding.ticketLayout // Capture only this layout
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(view.width, view.height, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val pageCanvas = page.canvas
+        pageCanvas.drawBitmap(bitmap, 0f, 0f, null)
+        pdfDocument.finishPage(page)
+
+        // Save PDF in internal storage
+        val pdfFile = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ticket.pdf")
+
+
+        try {
+            val fos = FileOutputStream(pdfFile)
+            pdfDocument.writeTo(fos)
+            pdfDocument.close()
+            fos.close()
+            Toast.makeText(this, "PDF saved: ${pdfFile.absolutePath}", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to save PDF", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SessionManager.clearBookingData()
+    }
+
 }

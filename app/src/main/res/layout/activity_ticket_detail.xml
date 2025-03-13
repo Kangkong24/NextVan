@@ -43,7 +43,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/header_layout"
@@ -57,6 +57,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/ticketLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="18dp"
@@ -149,9 +150,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Time"
-                        android:textStyle="bold"
                         android:textColor="@color/light_blue"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="@+id/imageView8"
                         app:layout_constraintStart_toStartOf="@+id/imageView8"
                         app:layout_constraintTop_toBottomOf="@+id/imageView8" />
@@ -163,8 +164,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="16dp"
-                    android:padding="6dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="6dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -176,34 +177,34 @@
                             android:id="@+id/textView23"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
                             android:text="From"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/textView22"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/textView21"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
                             android:layout_marginTop="12dp"
                             android:text="Departure Date"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/textView20"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="-"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -216,39 +217,37 @@
                             android:id="@+id/textView24"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
                             android:text="To"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/textView25"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/returnDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textSize="16sp"
                             android:text="Return Date"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tvReturnDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="-"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
 
                     </LinearLayout>
-
-
 
 
                 </LinearLayout>
@@ -263,30 +262,30 @@
                         android:id="@+id/user_img"
                         android:layout_width="44dp"
                         android:layout_height="48dp"
-                        app:srcCompat="@drawable/profile"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        app:srcCompat="@drawable/profile" />
 
                     <TextView
                         android:id="@+id/user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="User name"
                         android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:layout_marginStart="8dp"
+                        app:layout_constraintBottom_toBottomOf="@id/user_img"
                         app:layout_constraintStart_toEndOf="@id/user_img"
-                        app:layout_constraintTop_toTopOf="@id/user_img"
-                        app:layout_constraintBottom_toBottomOf="@id/user_img" />
+                        app:layout_constraintTop_toTopOf="@id/user_img" />
 
                     <TextView
                         android:id="@+id/tv_seat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:textSize="16sp"
                         android:text="Seat"
+                        android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -302,7 +301,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
                 <ImageView
                     android:id="@+id/imageView10"
                     android:layout_width="match_parent"
@@ -313,8 +311,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="16dp"
-                    android:padding="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
 
                     <LinearLayout
@@ -327,26 +325,27 @@
                             android:id="@+id/tv_passengers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
                             android:text="Passengers"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tv_adult_count"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/tv_child_count"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
 
                     </LinearLayout>
@@ -361,39 +360,40 @@
                             android:id="@+id/tv_company"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
                             android:text="Company"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tv_company_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/price"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textSize="16sp"
                             android:text="Price"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tv_price"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
                             android:text="-"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
 
                 </LinearLayout>
+
                 <ImageView
                     android:id="@+id/imageView44"
                     android:layout_width="match_parent"
@@ -421,29 +421,26 @@
                         android:id="@+id/tv_barcode_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="1234567890"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="4dp"
-                        app:layout_constraintTop_toBottomOf="@+id/img_barcode"
+                        app:layout_constraintEnd_toEndOf="@+id/img_barcode"
                         app:layout_constraintStart_toStartOf="@+id/img_barcode"
-                        app:layout_constraintEnd_toEndOf="@+id/img_barcode"/>
+                        app:layout_constraintTop_toBottomOf="@+id/img_barcode" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <Button
-                    android:id="@+id/download_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Download Ticket"
-                    android:background="@drawable/border_radious"
-                    android:layout_gravity="center"/>
 
             </LinearLayout>
 
-
-
+            <Button
+                android:id="@+id/download_btn"
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/border_radious"
+                android:text="Download Ticket" />
         </LinearLayout>
 
     </ScrollView>

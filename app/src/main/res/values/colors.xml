@@ -8,4 +8,6 @@
     <color name="darker_grey">#D9D9D9</color>
     <color name="dark">#999999</color>
     <color name="tomato">#E91E1E</color>
+    <color name="background_light">#FFFFFF</color>
+    <color name="text_light">#212121</color>
 </resources>
