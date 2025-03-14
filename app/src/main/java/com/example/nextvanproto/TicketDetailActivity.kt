@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.example.nextvanproto.databinding.ActivityTicketDetailBinding
 import java.io.File
@@ -26,6 +25,7 @@ class TicketDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Retrieve data from Intent
+        val routeId = intent.getIntExtra("route_id", -1)
         val selectedSeats = intent.getStringExtra("selectedSeats") ?: ""
         val totalPrice = intent.getDoubleExtra("totalPrice", 0.0)
         val companyName = intent.getStringExtra("company_name") ?: ""
@@ -61,6 +61,8 @@ class TicketDetailActivity : AppCompatActivity() {
 
 
             // Route Information
+
+            tvVanNo.text = routeId.toString()
             fromProvince.text = fromLocation
             toProvince.text = toLocation
             textView19.text = arriveTime
@@ -103,8 +105,12 @@ class TicketDetailActivity : AppCompatActivity() {
         pageCanvas.drawBitmap(bitmap, 0f, 0f, null)
         pdfDocument.finishPage(page)
 
-        // Save PDF in internal storage
-        val pdfFile = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ticket.pdf")
+        // Get the reference number
+        val referenceNumber = intent.getStringExtra("reference_number") ?: "unknown"
+        // Sanitize it
+        val safeReferenceNumber = referenceNumber.replace(Regex("[^a-zA-Z0-9_-]"), "")
+
+        val pdfFile = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ticket_$safeReferenceNumber.pdf")
 
 
         try {
@@ -121,6 +127,11 @@ class TicketDetailActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        SessionManager.clearBookingData()
+    }
+
+    override fun onPause() {
+        super.onPause()
         SessionManager.clearBookingData()
     }
 

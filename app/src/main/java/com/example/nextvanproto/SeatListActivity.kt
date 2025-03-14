@@ -252,6 +252,7 @@ class SeatListActivity : AppCompatActivity() {
                         // Move to TicketDetailActivity after successful booking
                         val intent = Intent(this@SeatListActivity, TicketDetailActivity::class.java)
                         intent.putExtra("selectedSeats", selectedSeats.joinToString(", "))
+                        intent.putExtra("route_id", routeId)
                         intent.putExtra("totalPrice", totalPrice)
                         intent.putExtra("company_name", companyName)
                         intent.putExtra("company_logo", companyLogo)

@@ -17,6 +17,7 @@ class RouteAdapter(
     class RouteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val companyLogo: ImageView = view.findViewById(R.id.imageView5)
         val arriveTime: TextView = view.findViewById(R.id.textView14)
+        val vanNum: TextView = view.findViewById(R.id.tvVanNum)
         val fromLocation: TextView = view.findViewById(R.id.textView15)
         val toLocation: TextView = view.findViewById(R.id.textView16)
         val price: TextView = view.findViewById(R.id.textView17)
@@ -26,6 +27,7 @@ class RouteAdapter(
                 .load(route.company_logo)
                 .into(companyLogo)
 
+            vanNum.text = route.id.toString()
             arriveTime.text = route.arrive_time
             fromLocation.text = route.from_location
             toLocation.text = route.to_location
