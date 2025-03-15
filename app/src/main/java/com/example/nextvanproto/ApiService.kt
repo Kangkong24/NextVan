@@ -43,6 +43,9 @@ interface ApiService {
     @POST("reset_password.php")
     fun resetPassword(@Body request: ResetPasswordRequest): Call<ForgotPasswordResponse>
 
+    @GET("get_user_ticket_data.php")
+    fun getUserTickets(@Query("user_id") userId: Int): Call<TicketResponse>
+
 }
 
 

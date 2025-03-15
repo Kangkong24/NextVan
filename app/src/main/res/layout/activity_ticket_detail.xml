@@ -293,6 +293,7 @@
                         android:id="@+id/tv_seat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:text="Seat"
                         android:textSize="16sp"
@@ -303,6 +304,7 @@
                         android:id="@+id/tv_seat_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
                         android:text="-"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="@+id/tv_seat"
@@ -445,7 +447,7 @@
 
             <Button
                 android:id="@+id/download_btn"
-                android:layout_width="360dp"
+                android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"

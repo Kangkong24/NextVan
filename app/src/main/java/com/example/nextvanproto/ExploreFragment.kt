@@ -34,6 +34,9 @@ class ExploreFragment : Fragment() {
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.setHasFixedSize(true)  // Improves performance
+        recyclerView.clipToPadding = false  // Prevents last item from being cut off
+        recyclerView.setPadding(0, 0, 0, 160) // Add padding to bottom
         // Consider adding ItemDecoration or default adapter here
     }
 

@@ -54,11 +54,16 @@ class SeatListActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
         binding.btnConfirmSeats.setOnClickListener {
-            val selectedSeats =
-                seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
+            val selectedSeats = seatList.filter { it.status == Seat.SeatStatus.SELECTED }.map { it.name }
+            val totalPassengers = (adultCount ?: 0) + (childCount ?: 0)
 
             if (selectedSeats.isEmpty()) {
                 Toast.makeText(this, "Please select seat accordingly", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedSeats.size != totalPassengers) {
+                Toast.makeText(this, "Please select $totalPassengers seat(s)", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

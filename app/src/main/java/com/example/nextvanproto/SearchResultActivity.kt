@@ -32,6 +32,9 @@ class SearchResultActivity : AppCompatActivity() {
         tvSelectItemPrompt.visibility = View.VISIBLE
 
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.setHasFixedSize(true)  // Improves performance
+        recyclerView.clipToPadding = false  // Prevents last item from being cut off
+        recyclerView.setPadding(0, 0, 0, 160) // Add padding to bottom
 
         fetchRoutes()
 
