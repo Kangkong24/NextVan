@@ -66,6 +66,7 @@ class TicketDetailActivity : AppCompatActivity() {
             fromProvince.text = fromLocation
             toProvince.text = toLocation
             textView19.text = arriveTime
+            tvVanDeparture.text = date
             textView22.text = fromLocation
             textView25.text = toLocation
             textView20.text = departureDate

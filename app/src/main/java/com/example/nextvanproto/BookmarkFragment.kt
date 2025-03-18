@@ -40,7 +40,7 @@ class BookmarkFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)  // Improves performance
         recyclerView.clipToPadding = false  // Prevents last item from being cut off
-        recyclerView.setPadding(0, 0, 0, 160) // Add padding to bottom
+        recyclerView.setPadding(0, 0, 0, 240) // Add padding to bottom
         adapter = BookmarkAdapter(ticketList)
         recyclerView.adapter = adapter
     }

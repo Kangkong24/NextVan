@@ -2,4 +2,50 @@
     <string name="app_name">NextVanProto</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="terms_conditions">
+        Welcome to NextVan! By using our app, you agree to our terms:
+        \n\n1. You must use our service lawfully.
+        \n2. We are not responsible for lost or stolen items.
+        \n3. Booking fees are non-refundable.
+        \n4. Data privacy is important to us. See our Privacy Policy for more details.
+        \n\nBy clicking OK, you agree to these terms.
+    </string>
+
+    <string name="privacy_policy">
+        We respect your privacy. Your data is securely stored and never shared with third parties without your consent.
+
+        \n\n1. **Data Collection:** We collect personal data such as name, contact details, and booking history to enhance your experience.
+
+        \n2. **Data Usage:** Your data is used for booking management, customer support, and service improvements.
+
+        \n3. **Data Protection:** We implement strict security measures to safeguard your information.
+
+        \n4. **Third-Party Sharing:** We do not share your personal data with third parties except when required by law or to provide essential services.
+
+        \n5. **User Rights:** You can request data deletion or modification at any time through our support team.
+
+        \n6. **Cookies and Tracking:** We may use cookies to improve app performance and personalize your experience.
+
+        \n\nBy using NextVan, you agree to our Privacy Policy.
+    </string>
+
+    <string name="help_center">
+        Welcome to the Help Centre! Here are answers to common questions:
+
+        \n1. **How do I book a ride?**
+        Open the app, enter your departure and destination, and select an available ride.
+
+        \n2. **How can I cancel my booking?**
+        Go to "My Bookings," select your trip, and choose "Cancel."
+
+        \n3. **How do I contact support?**
+        Email us at support@nextvan.com or call our hotline.
+
+        \nNeed further assistance? Contact our support team anytime!
+    </string>
+
+
+
+
 </resources>

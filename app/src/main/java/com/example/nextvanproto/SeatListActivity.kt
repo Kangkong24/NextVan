@@ -120,7 +120,13 @@ class SeatListActivity : AppCompatActivity() {
             seatAdapter = SeatListAdapter(seatList, this, object : SeatListAdapter.SelectedSeat {
                 override fun Return(selectedNames: String, num: Int) {
                     binding.tvNumSelectedSeat.text = "$num Seat(s) Selected"
-                    totalPrice = num * pricePerSeat  // Calculate total price
+
+                    // Calculate total price based on one-way or round-trip
+                    totalPrice = num * pricePerSeat
+                    if (!returnDate.isNullOrEmpty()) {
+                        totalPrice *= 2  // Double the price for round-trip
+                    }
+
                     binding.tvPrice.text = "₱${String.format("%.2f", totalPrice)}"
                     binding.tvSelectedSeat.text = selectedNames
                 }
@@ -208,7 +214,7 @@ class SeatListActivity : AppCompatActivity() {
         val randomPart = (1..4)
             .map { ('A'..'Z').random() } // Generates 4 random uppercase letters
             .joinToString("")
-        return "TKT-$randomPart$timestamp"
+        return "NV-$randomPart$timestamp"
     }
 
     // Function to book ticket after successful seat reservation

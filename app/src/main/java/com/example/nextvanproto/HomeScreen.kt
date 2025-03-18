@@ -100,12 +100,11 @@ class HomeScreen : AppCompatActivity() {
         setupSearchView(svFrom)
         setupSearchView(svTo)
 
-
         btnSearch.setOnClickListener {
             val fromLocation = svFrom.query.toString().trim()
             val toLocation = svTo.query.toString().trim()
             val departDate = SessionManager.departDate
-            val returnDate = SessionManager.returnDate
+            val returnDate = SessionManager.returnDate?.takeIf { it.isNotEmpty() }
             val totalPassengers = (adultCount ?: 0) + (childCount ?: 0)
 
             // Validate locations
@@ -117,12 +116,6 @@ class HomeScreen : AppCompatActivity() {
             // Validate departure date
             if (departDate.isNullOrEmpty()) {
                 Toast.makeText(this, "Please select a departure date", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Validate return date
-            if (returnDate.isNullOrEmpty()) {
-                Toast.makeText(this, "Please select a return date", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -143,8 +136,6 @@ class HomeScreen : AppCompatActivity() {
             }
             startActivity(intent)
         }
-
-
 
         etReturnDate.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -283,7 +274,6 @@ class HomeScreen : AppCompatActivity() {
             }
         })
     }
-
 
     private fun updateCount(isAdult: Boolean, isIncrement: Boolean) {
         val totalCount = adultCount + childCount

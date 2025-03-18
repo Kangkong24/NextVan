@@ -18,6 +18,7 @@ class RouteAdapter(
         val companyLogo: ImageView = view.findViewById(R.id.imageView5)
         val arriveTime: TextView = view.findViewById(R.id.textView14)
         val vanNum: TextView = view.findViewById(R.id.tvVanNum)
+        val departTime: TextView = view.findViewById(R.id.tvDepartureTime)
         val fromLocation: TextView = view.findViewById(R.id.textView15)
         val toLocation: TextView = view.findViewById(R.id.textView16)
         val price: TextView = view.findViewById(R.id.textView17)
@@ -28,6 +29,7 @@ class RouteAdapter(
                 .into(companyLogo)
 
             vanNum.text = route.id.toString()
+            departTime.text = route.date
             arriveTime.text = route.arrive_time
             fromLocation.text = route.from_location
             toLocation.text = route.to_location

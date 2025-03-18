@@ -123,6 +123,7 @@
                     android:background="@drawable/grey_bg"
                     android:iconifiedByDefault="false"
                     android:searchHintIcon="@drawable/from_van"
+                    android:queryHint="Enter departure province..."
                     app:layout_constraintTop_toBottomOf="@+id/tvFrom" />
 
                 <TextView
@@ -141,6 +142,7 @@
                     android:background="@drawable/grey_bg"
                     android:iconifiedByDefault="false"
                     android:searchHintIcon="@drawable/to_van"
+                    android:queryHint="Enter destination province..."
                     app:layout_constraintTop_toBottomOf="@+id/tvTo" />
 
                 <androidx.recyclerview.widget.RecyclerView
