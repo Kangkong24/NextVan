@@ -1,6 +1,7 @@
 package com.example.nextvanproto
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -154,6 +155,12 @@ class HomeScreen : AppCompatActivity() {
             // Set the minimum date to today to exclude past dates
             datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
+            // Add "Clear" button
+            datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
+                etReturnDate.text.clear()  // Clear text field
+                SessionManager.returnDate = ""  // Reset SessionManager value
+            }
+
             datePickerDialog.show()
         }
 
@@ -167,15 +174,22 @@ class HomeScreen : AppCompatActivity() {
                 val formattedDate = String.format("%02d-%02d-%d", selectedDay, selectedMonth + 1, selectedYear)
                 etDepartDate.setText(formattedDate)
 
-                // Save in SessionManager for the session
+                // Save selected date in SessionManager
                 SessionManager.departDate = formattedDate
             }, year, month, day)
 
             // Set the minimum date to today to exclude past dates
             datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
+            // Add "Clear" button
+            datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
+                etDepartDate.text.clear()  // Clear text field
+                SessionManager.departDate = ""  // Reset SessionManager value
+            }
+
             datePickerDialog.show()
         }
+
 
 
 
@@ -288,8 +302,7 @@ class HomeScreen : AppCompatActivity() {
                 }
             }
         } else {
-            // Decrement only if greater than 0
-            if (isAdult && adultCount > 0) {
+            if (isAdult && adultCount > 1) {
                 adultCount--
             } else if (!isAdult && childCount > 0) {
                 childCount--
@@ -297,7 +310,6 @@ class HomeScreen : AppCompatActivity() {
         }
         updateUI()
     }
-
 
     private fun updateUI() {
         tvAdultCount.text = "$adultCount Adult"

@@ -9,6 +9,7 @@ import android.os.Environment
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.nextvanproto.databinding.ActivityTicketDetailBinding
@@ -35,7 +36,7 @@ class TicketDetailActivity : AppCompatActivity() {
         val date = intent.getStringExtra("date") ?: ""
         val arriveTime = intent.getStringExtra("arrive_time") ?: ""
         val departureDate = intent.getStringExtra("depart_date")?: ""
-        val returnDate = intent.getStringExtra("return_date")?: ""
+        val returnDate = intent.getStringExtra("return_date")?: "N/A"
         val adultCount = intent.getIntExtra("adult_count", 0)
         val childCount = intent.getIntExtra("child_count", 0)
         val referenceNumber = intent.getStringExtra("reference_number")?: ""
@@ -50,7 +51,6 @@ class TicketDetailActivity : AppCompatActivity() {
             finish() // Close current activity
         }
 
-
         binding.apply {
             // Load the company logo using Glide
             Glide.with(this@TicketDetailActivity)
@@ -59,9 +59,7 @@ class TicketDetailActivity : AppCompatActivity() {
 
             tvCompanyName.text = companyName
 
-
             // Route Information
-
             tvVanNo.text = routeId.toString()
             fromProvince.text = fromLocation
             toProvince.text = toLocation
@@ -86,12 +84,16 @@ class TicketDetailActivity : AppCompatActivity() {
             }
         }
 
-
         val sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val userName = sharedPreferences.getString("userName", "User")
         val tvUsername = findViewById<TextView>(R.id.user_name)
         tvUsername.text = userName
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitDialog()
+            }
+        })
     }
     private fun generatePDF() {
         val view = binding.ticketLayout // Capture only this layout
@@ -113,7 +115,6 @@ class TicketDetailActivity : AppCompatActivity() {
 
         val pdfFile = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "ticket_$safeReferenceNumber.pdf")
 
-
         try {
             val fos = FileOutputStream(pdfFile)
             pdfDocument.writeTo(fos)
@@ -134,6 +135,27 @@ class TicketDetailActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         SessionManager.clearBookingData()
+    }
+
+    private fun showExitDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Exit Confirmation")
+        builder.setMessage("Are you sure you want to go back to the home screen?")
+
+        builder.setPositiveButton("Yes") { _, _ ->
+            SessionManager.clearBookingData()
+            val intent = Intent(this, HomeScreen::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 }

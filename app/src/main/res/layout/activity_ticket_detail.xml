@@ -289,11 +289,10 @@
                     <ImageView
                         android:id="@+id/user_img"
                         android:layout_width="44dp"
-                        android:layout_height="48dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_height="44dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/profile" />
+                        app:srcCompat="@drawable/user_profile" />
 
                     <TextView
                         android:id="@+id/user_name"
@@ -320,7 +319,7 @@
 
                     <TextView
                         android:id="@+id/tv_seat_num"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         android:text="-"
@@ -463,13 +462,15 @@
 
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/download_btn"
                 android:layout_width="320dp"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/border_radious"
+                app:cornerRadius="5dp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/dark_blue"
                 android:text="Download Ticket" />
         </LinearLayout>
 

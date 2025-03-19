@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/bottom_bookmark"
-        android:icon="@drawable/baseline_bookmark_24"
+        android:icon="@drawable/baseline_history_24"
         android:title="History"/>
 
     <item

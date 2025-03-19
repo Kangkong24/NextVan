@@ -4,7 +4,8 @@
     android:layout_height="48dp"
     android:padding="10dp"
     android:background="@color/dark_grey"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:elevation="3dp">
 
     <TextView
         android:id="@+id/tvLocation"

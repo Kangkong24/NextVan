@@ -24,7 +24,7 @@ object SessionManager {
         set(value) = preferences.edit().putString("returnDate", value).apply()
 
     var adultCount: Int
-        get() = preferences.getInt("adultCount", 0)
+        get() = preferences.getInt("adultCount", 1)
         set(value) = preferences.edit().putInt("adultCount", value).apply()
 
     var childCount: Int
