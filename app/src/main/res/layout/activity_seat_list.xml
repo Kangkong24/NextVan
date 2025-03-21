@@ -46,7 +46,6 @@
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
         app:layout_constraintBottom_toTopOf="@+id/bottomContainer"
-        app:layout_constraintVertical_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -78,6 +77,15 @@
                     app:layout_constraintEnd_toEndOf="@+id/imgVan"
                     app:layout_constraintStart_toStartOf="@+id/imgVan"
                     app:layout_constraintTop_toTopOf="@+id/imgVan" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearSeats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear Selection"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgVan" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

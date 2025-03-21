@@ -79,7 +79,7 @@ class ProfileFragment : Fragment() {
         }
 
         layoutLogout.setOnClickListener {
-            logoutUser()
+            showLogoutDialog()
         }
     }
 
@@ -91,6 +91,27 @@ class ProfileFragment : Fragment() {
         }
         startActivity(Intent.createChooser(shareIntent, "Invite via"))
     }
+
+    private fun showLogoutDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        builder.setTitle("Are you sure you want to Logout?")
+
+        builder.setPositiveButton("Yes") { _, _ ->
+            logoutUser()
+            val intent = Intent(requireContext(), LoginScreen::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
 
     private fun logoutUser() {
         // Access SharedPreferences and clear login state

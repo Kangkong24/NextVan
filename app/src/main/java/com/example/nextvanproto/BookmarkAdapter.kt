@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class BookmarkAdapter(private val tickets: List<Ticket>) : RecyclerView.Adapter<BookmarkAdapter.HistoryViewHolder>() {
+class BookmarkAdapter(private var tickets: List<Ticket>) : RecyclerView.Adapter<BookmarkAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val companyName: TextView = view.findViewById(R.id.tvCompanyName)
@@ -40,4 +40,10 @@ class BookmarkAdapter(private val tickets: List<Ticket>) : RecyclerView.Adapter<
     }
 
     override fun getItemCount() = tickets.size
+
+    fun updateList(newList: List<Ticket>) {
+        tickets = newList
+        notifyDataSetChanged()
+    }
 }
+

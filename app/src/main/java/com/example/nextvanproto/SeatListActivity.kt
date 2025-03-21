@@ -145,7 +145,31 @@ class SeatListActivity : AppCompatActivity() {
         }
     private fun setVariable() {
         binding.imgBackBtn.setOnClickListener { finish() }
+
+        binding.btnClearSeats.setOnClickListener {
+            clearSelectedSeats()
+        }
+
     }
+
+    private fun clearSelectedSeats() {
+        // Efficiently filter and update only selected seats
+        seatList.filter { it.status == Seat.SeatStatus.SELECTED }
+            .forEach { it.status = Seat.SeatStatus.AVAILABLE }
+
+        // Clear the adapter's selected seats list
+        seatAdapter.clearSelectedSeats()
+
+        // Notify adapter to refresh views
+        seatAdapter.notifyDataSetChanged()
+
+        // Update UI elements
+        binding.tvNumSelectedSeat.text = "0 Seat(s) Selected"
+        binding.tvSelectedSeat.text = ""
+        binding.tvPrice.text = "₱0.00"
+        totalPrice = 0.0
+    }
+
 
     private fun getIntentExtra() {
         val intent = intent

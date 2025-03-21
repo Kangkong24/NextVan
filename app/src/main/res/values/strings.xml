@@ -45,6 +45,14 @@
         \nNeed further assistance? Contact our support team anytime!
     </string>
 
+    <string-array name="ticket_status_options">
+        <item>All</item>
+        <item>ongoing</item>
+        <item>completed</item>
+        <item>canceled</item>
+    </string-array>
+
+
 
 
 
