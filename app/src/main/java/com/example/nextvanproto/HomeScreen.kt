@@ -1,8 +1,10 @@
 package com.example.nextvanproto
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -16,6 +18,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nextvanproto.SessionManager.adultCount
@@ -28,6 +32,9 @@ import java.util.Calendar
 
 class HomeScreen : AppCompatActivity() {
 
+    private lateinit var tvUsername: TextView
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var helpBtn: ImageView
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var tvAdultMinus: ImageView
     private lateinit var tvAdultPlus: ImageView
@@ -40,7 +47,7 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var rvSearchResults: RecyclerView
     private lateinit var adapter: LocationAdapter
     private val locationList = mutableListOf<Location>()
-    private var focusedSearchView: SearchView? = null // Track focused SearchView
+    private var focusedSearchView: SearchView? = null
     private var backPressedTime: Long = 0
     private lateinit var backToast: Toast
 
@@ -50,12 +57,23 @@ class HomeScreen : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_home_screen)
 
+        if (shouldShowTutorial()) {
+            val tutorialDialog = TutorialDialogFragment()
+            tutorialDialog.show(supportFragmentManager, "TutorialDialog")
+        }
+
         tvAdultMinus = findViewById(R.id.tvAdultMinus)
         tvAdultPlus = findViewById(R.id.tvAdultPlus)
         tvAdultCount = findViewById(R.id.tvAdultCount)
         tvChildMinus = findViewById(R.id.tvMinusChild)
         tvChildPlus = findViewById(R.id.tvPlusChild)
         tvChildCount = findViewById(R.id.tvChildCount)
+        tvUsername = findViewById(R.id.tvUsername)
+        helpBtn = findViewById(R.id.imgHelpBtn)
+
+
+        // Initialize ViewModel
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         SessionManager.init(this)
         updateUI()
@@ -75,12 +93,15 @@ class HomeScreen : AppCompatActivity() {
 
         val btnSearch = findViewById<Button>(R.id.btnSearch)
 
-        // Retrieve user name from SharedPreferences
-        val sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
-        val userName = sharedPreferences.getString("userName", "User") // Default to "User" if not found
-        // Display the user name
-        val tvUsername = findViewById<TextView>(R.id.tvUsername)
-        tvUsername.text = userName
+        // Observe username LiveData
+        userViewModel.username.observe(this, Observer { newUsername ->
+            tvUsername.text = newUsername
+        })
+
+        // Set initial value from SharedPreferences
+        val sharedPreferences: SharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
+        val savedUsername = sharedPreferences.getString("userName", "User")
+        userViewModel.setUsername(savedUsername ?: "User") // Set initial username
 
         svFrom = findViewById(R.id.svFrom)
         svTo = findViewById(R.id.svTo)
@@ -100,6 +121,10 @@ class HomeScreen : AppCompatActivity() {
         // Attach listeners to both SearchViews
         setupSearchView(svFrom)
         setupSearchView(svTo)
+
+        helpBtn.setOnClickListener{
+            TutorialDialogFragment().show(supportFragmentManager, "TutorialDialog")
+        }
 
         btnSearch.setOnClickListener {
             val fromLocation = svFrom.query.toString().trim()
@@ -181,7 +206,6 @@ class HomeScreen : AppCompatActivity() {
             // Set the minimum date to today to exclude past dates
             datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
-            // Add "Clear" button
             datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
                 etDepartDate.text.clear()  // Clear text field
                 SessionManager.departDate = ""  // Reset SessionManager value
@@ -189,9 +213,6 @@ class HomeScreen : AppCompatActivity() {
 
             datePickerDialog.show()
         }
-
-
-
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId){
@@ -232,9 +253,8 @@ class HomeScreen : AppCompatActivity() {
                 backPressedTime = System.currentTimeMillis()
             }
         })
-
-
     }
+
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
     }
@@ -314,6 +334,11 @@ class HomeScreen : AppCompatActivity() {
     private fun updateUI() {
         tvAdultCount.text = "$adultCount Adult"
         tvChildCount.text = "$childCount Child"
+    }
+
+    private fun shouldShowTutorial(): Boolean {
+        val sharedPref = getSharedPreferences("NextVanPrefs", Context.MODE_PRIVATE)
+        return !sharedPref.getBoolean("tutorial_shown", false)  // Show if false
     }
 
 }

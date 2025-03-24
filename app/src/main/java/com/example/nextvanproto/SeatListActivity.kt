@@ -137,7 +137,7 @@ class SeatListActivity : AppCompatActivity() {
                 layoutManager = gridLayoutManager
                 gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
-                        return 1 // Each item takes 1 span
+                        return 1
                     }
                 }
                 adapter = seatAdapter
@@ -153,17 +153,13 @@ class SeatListActivity : AppCompatActivity() {
     }
 
     private fun clearSelectedSeats() {
-        // Efficiently filter and update only selected seats
         seatList.filter { it.status == Seat.SeatStatus.SELECTED }
             .forEach { it.status = Seat.SeatStatus.AVAILABLE }
 
-        // Clear the adapter's selected seats list
         seatAdapter.clearSelectedSeats()
 
-        // Notify adapter to refresh views
         seatAdapter.notifyDataSetChanged()
 
-        // Update UI elements
         binding.tvNumSelectedSeat.text = "0 Seat(s) Selected"
         binding.tvSelectedSeat.text = ""
         binding.tvPrice.text = "₱0.00"

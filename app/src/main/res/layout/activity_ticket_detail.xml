@@ -59,8 +59,8 @@
             <LinearLayout
                 android:id="@+id/ticketLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="18dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:background="@drawable/white_bg_corners"
                 android:orientation="vertical">
 
@@ -274,12 +274,9 @@
                             android:textColor="@color/black"
                             android:textStyle="bold" />
 
-
                     </LinearLayout>
 
-
                 </LinearLayout>
-
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -334,6 +331,7 @@
                     android:id="@+id/imageView10"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:scaleType="fitXY"
                     app:srcCompat="@drawable/dash_line" />
 
                 <LinearLayout
@@ -341,12 +339,12 @@
                     android:layout_height="match_parent"
                     android:layout_margin="16dp"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="6dp">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="0.3"
                         android:orientation="vertical">
 
@@ -382,7 +380,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.3"
                         android:orientation="vertical">
 
                         <TextView
@@ -420,13 +418,13 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-
                 </LinearLayout>
 
                 <ImageView
                     android:id="@+id/imageView44"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:scaleType="fitXY"
                     app:srcCompat="@drawable/dash_line" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -473,8 +471,11 @@
                 android:backgroundTint="@color/dark_blue"
                 android:text="Download Ticket" />
         </LinearLayout>
-
     </ScrollView>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frame_containerr"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

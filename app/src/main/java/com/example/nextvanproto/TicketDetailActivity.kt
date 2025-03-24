@@ -25,6 +25,9 @@ class TicketDetailActivity : AppCompatActivity() {
         binding = ActivityTicketDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val feedbackDialog = FeedbackDialogFragment()
+        feedbackDialog.show(supportFragmentManager, "FeedbackDialog")
+
         // Retrieve data from Intent
         val routeId = intent.getIntExtra("route_id", -1)
         val selectedSeats = intent.getStringExtra("selectedSeats") ?: ""

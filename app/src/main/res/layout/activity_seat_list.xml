@@ -82,8 +82,11 @@
                 android:id="@+id/btnClearSeats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clear Selection"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/baseline_delete_24"
+                android:backgroundTint="@color/dark_blue"
+                android:text="Clear"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/imgVan"
                 app:layout_constraintTop_toBottomOf="@+id/imgVan" />
 
 

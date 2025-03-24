@@ -44,6 +44,12 @@ interface ApiService {
     @GET("get_user_ticket_data.php")
     fun getUserTickets(@Query("user_id") userId: Int): Call<TicketResponse>
 
+    @POST("update_user.php")
+    fun updateUser(@Body request: UpdateUserRequest): Call<UpdateUserResponse>
+
+    @POST("submit_feedback.php")
+    fun submitFeedback(@Body request: FeedbackRequest): Call<FeedbackResponse>
+
 }
 
 

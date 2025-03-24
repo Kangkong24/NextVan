@@ -1,5 +1,6 @@
 package com.example.nextvanproto
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -52,15 +53,19 @@ class ProfileFragment : Fragment() {
 
     private fun setupClickListeners() {
         layoutManageAccount.setOnClickListener {
-            Toast.makeText(requireContext(), "Manage Account clicked", Toast.LENGTH_SHORT).show()
+            val fragment = ManageAccountFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame_containers, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         layoutHelpCentre.setOnClickListener {
             HelpCenterDialogFragment().show(parentFragmentManager, "HelpCenterDialog")        }
 
         layoutShareFeedback.setOnClickListener {
-            Toast.makeText(requireContext(), "Share Feedback clicked", Toast.LENGTH_SHORT).show()
-
+            val feedbackDialog = FeedbackDialogFragment()
+            feedbackDialog.show(parentFragmentManager, "FeedbackDialog")
         }
 
         layoutInvite.setOnClickListener {
@@ -111,7 +116,6 @@ class ProfileFragment : Fragment() {
         val alertDialog = builder.create()
         alertDialog.show()
     }
-
 
     private fun logoutUser() {
         // Access SharedPreferences and clear login state
